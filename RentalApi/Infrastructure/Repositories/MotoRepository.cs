@@ -7,6 +7,17 @@ namespace RentalApi.Infrastructure.Repositories
     {
         private readonly List<Moto> _motos = new List<Moto>();
         private int _nextId = 1;
+
+        public MotoRepository()
+        {
+            _motos.Add(new Moto
+            {
+                Id = 1,
+                Ano = 2023,
+                Modelo = "XL200",
+                Placa = "ABC-1272"
+            });
+        }
         public async Task<List<Moto>> GetAllAsync()
         {
             return await Task.FromResult(_motos);
@@ -27,6 +38,22 @@ namespace RentalApi.Infrastructure.Repositories
             _motos.Add(moto);
             return await Task.FromResult(moto);
         }
+        public async Task<bool> UpdateMotoLicenseAsync(int id, string license)
+        {
+            var moto = await GetByIdAsync(id);
+            if (moto == null)
+            {
+                return false;
+            }
+            var equalLicense = await GetByLicenseAsync(license);
+            if (equalLicense != null)
+            {
+                return false;
+            }
+            moto.Placa = license;
+            return await Task.FromResult(true);
+        }
+
         public async Task<bool> RemoveMotoAsync(int id)
         {
             var moto = await GetByIdAsync(id);

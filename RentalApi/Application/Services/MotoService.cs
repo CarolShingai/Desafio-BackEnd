@@ -28,7 +28,21 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.AddMotoAsync(moto);
         }
-        public async Task<bool> RemoveRegisteredMotoAsync(int id)
+        public async Task<bool> ChangeMotoLicenseAsync(int id, string license)
+        {
+            var motoExist = await _motoRepository.GetByIdAsync(id);
+            if (motoExist == null)
+            {
+                throw new Exception("Motorcycle not found.");
+            }
+                var motoComMesmaPlaca = await _motoRepository.GetByLicenseAsync(license);
+            if (motoComMesmaPlaca != null && motoComMesmaPlaca.Id != id)
+            {
+                throw new Exception("License plate already exists on another motorcycle.");
+            }
+            return await _motoRepository.UpdateMotoLicenseAsync(id, license);
+        }
+        public async Task<bool> DeleteRegisteredMotoAsync(int id)
         {
             var motoExist = await _motoRepository.GetByIdAsync(id);
             if (motoExist == null)
@@ -37,5 +51,6 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.RemoveMotoAsync(id);
         }
+        
     }
 }

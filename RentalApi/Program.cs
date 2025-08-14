@@ -46,11 +46,28 @@ app.MapPost("/motos", async (MotoService motoService, Moto newMoto) =>
     }
 });
 
+app.MapPut("/motos", async (int id, string license, MotoService motoService) =>
+{
+    try
+    {
+        var success = await motoService.ChangeMotoLicenseAsync(id, license);
+        if (success)
+        {
+            return Results.Ok(new { message = "Placa atualizada com sucesso!" });
+        }
+        return Results.BadRequest(new { message = "Erro ao atualizar a placa" });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
+});
+
 app.MapDelete("/motos/{id}", async (int id, MotoService motoService) =>
 {
     try
     {
-        await motoService.RemoveRegisteredMotoAsync(id);
+        await motoService.DeleteRegisteredMotoAsync(id);
         return Results.NoContent();
     }
     catch (Exception ex)
