@@ -1,10 +1,17 @@
 using Microsoft.OpenApi.Models;
+using RentalApi.Application.Services;
+using RentalApi.Domain.Interfaces;
+using RentalApi.Domain.Entities;
+using RentalApi.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Serviços necessários para o Swagger
 builder.Services.AddEndpointsApiExplorer(); // entrada
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IMotoRepository, MotoRepository>();
+builder.Services.AddScoped<MotoService>();
 
 var app = builder.Build();
 
@@ -15,37 +22,41 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// var meusDados = new List<string> { "Batata", "Cenoura", "Chocolate" };
+app.MapGet("/motos", async (MotoService motoService) => {
+    var motos = await motoService.GetAllMoto();
+    return Results.Ok(motos);
+});
 
-//motos: ano, modelos, placa(tipo unico) 
-// tabelas separadas entregador | admin
+app.MapGet("/motos/{id}", async (int id, MotoService motoService) => {
+    var moto = await motoService.GetMotoByIdAsync(id);
+    return moto is not null ? Results.Ok(moto) : Results.NotFound();
+});
 
+// Post
+app.MapPost("/motos", async (MotoService motoService, Moto newMoto) =>
+{
+    try
+    {
+        var createdMoto = await motoService.RegisterNewMotoAsync(newMoto);
+        return Results.Created($"/motos/{createdMoto.Id}", createdMoto);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
+});
 
-// ARQ hexagonal
-// -> recebe as requisições HTTP entrada post | delete | get
-// saida banco de dados | mensageria
-
-// Get -> Interface/IProduto -> ObterProduto
-// Post -> Interface/IProduto -> AdicionarProduto
-// Delete -> Interface/IProduto -> RemoverProduto
-
-// app.MapGet("/meusdados", () => {
-//     return Results.Ok(meusDados);
-// });
-
-// // Post
-// app.MapPost("/meusdados", (string novoDado) => {
-//     meusDados.Add(novoDado);
-//     return Results.Created($"/meusdados/{novoDado}", novoDado);
-// });
-
-// app.MapDelete("/meusdados/{index}", (int index) => {
-//     if (index < 0 || index >= meusDados.Count)
-//     {
-//         return Results.NotFound();
-//     }
-//     meusDados.RemoveAt(index);
-//     return Results.NoContent();
-// });
+app.MapDelete("/motos/{id}", async (int id, MotoService motoService) =>
+{
+    try
+    {
+        await motoService.RemoveRegisteredMotoAsync(id);
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
+});
 
 app.Run();
