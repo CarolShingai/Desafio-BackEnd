@@ -3,22 +3,50 @@ using RentalApi.Domain.Interfaces;
 
 namespace RentalApi.Application.Services
 {
+    /// <summary>
+    /// Service class for business logic related to Moto operations.
+    /// </summary>
     public class MotoService
     {
+        /// <summary>
+        /// Repository for Moto data access.
+        /// </summary>
         public readonly IMotoRepository _motoRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the MotoService class.
+        /// </summary>
+        /// <param name="motoRepository">Repository for Moto operations.</param>
         public MotoService(IMotoRepository motoRepository)
         {
             _motoRepository = motoRepository;
         }
+
+        /// <summary>
+        /// Gets all motorcycles from the repository.
+        /// </summary>
+        /// <returns>List of all Moto entities.</returns>
         public async Task<List<Moto>> GetAllMoto()
         {
             return await _motoRepository.FindMotoAllAsync();
         }
+
+        /// <summary>
+        /// Gets a motorcycle by its unique identifier.
+        /// </summary>
+        /// <param name="identifier">Unique identifier of the motorcycle.</param>
+        /// <returns>The Moto entity if found, otherwise null.</returns>
         public async Task<Moto?> GetMotoByIdentifierAsync(string identifier)
         {
             return await _motoRepository.FindByMotoIdentifierAsync(identifier);
         }
+
+        /// <summary>
+        /// Registers a new motorcycle, ensuring the license plate is unique.
+        /// </summary>
+        /// <param name="moto">Moto entity to register.</param>
+        /// <returns>The registered Moto entity.</returns>
+        /// <exception cref="Exception">Thrown if a motorcycle with the same license plate already exists.</exception>
         public async Task<Moto> RegisterNewMotoAsync(Moto moto)
         {
             var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.Placa);
@@ -28,6 +56,14 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.AddMotoAsync(moto);
         }
+
+        /// <summary>
+        /// Changes the license plate of a motorcycle, ensuring uniqueness.
+        /// </summary>
+        /// <param name="identifier">Unique identifier of the motorcycle.</param>
+        /// <param name="license">New license plate.</param>
+        /// <returns>True if the update was successful.</returns>
+        /// <exception cref="Exception">Thrown if the motorcycle is not found or the license plate already exists on another motorcycle.</exception>
         public async Task<bool> ChangeMotoLicenseAsync(string identifier, string license)
         {
             var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
@@ -42,6 +78,13 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.UpdateMotoLicenseAsync(identifier, license);
         }
+
+        /// <summary>
+        /// Deletes a registered motorcycle by its identifier.
+        /// </summary>
+        /// <param name="identifier">Unique identifier of the motorcycle.</param>
+        /// <returns>True if the deletion was successful.</returns>
+        /// <exception cref="Exception">Thrown if the motorcycle is not found.</exception>
         public async Task<bool> DeleteRegisteredMotoAsync(string identifier)
         {
             var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
@@ -51,6 +94,5 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.RemoveMotoAsync(identifier);
         }
-        
     }
 }
