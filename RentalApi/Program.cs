@@ -5,6 +5,7 @@ using RentalApi.Domain.Interfaces;
 using RentalApi.Domain.Entities;
 using RentalApi.Infrastructure.Repositories;
 using RentalApi.Infrastructure.Data;
+using RentalApi.Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,29 +30,70 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Activate Swagger over development
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-app.MapGet("/motos", async (MotoService motoService) => {
-    var motos = await motoService.GetAllMoto();
-    return Results.Ok(motos);
-});
-
-app.MapGet("/motos/{id}", async (int id, MotoService motoService) => {
-    var moto = await motoService.GetMotoByIdAsync(id);
-    return moto is not null ? Results.Ok(moto) : Results.NotFound();
-});
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Post
-app.MapPost("/motos", async (MotoService motoService, Moto newMoto) =>
+app.MapPost("/motos", async (CreateMotoRequest request, MotoService motoService) =>
+{
+    var moto = new Moto
+    {
+        Identificador = request.Identificador,
+        Ano = request.Ano,
+        Modelo = request.Modelo,
+        Placa = request.Placa
+    };
+
+    var createdMoto = await motoService.RegisterNewMotoAsync(moto);
+
+    var response = new MotoResponse
+    {
+        Identificador = request.Identificador,
+        Ano = request.Ano,
+        Modelo = request.Modelo,
+        Placa = request.Placa
+    };
+
+    return Results.Created($"/motos/{createdMoto.Identificador}", response);
+});
+
+app.MapGet("/motos", async (MotoService motoService) =>
+{
+    var motos = await motoService.GetAllMoto();
+
+    var response = motos.Select(m => new MotoResponse
+    {
+        Identificador = m.Identificador,
+        Ano = m.Ano,
+        Modelo = m.Modelo,
+        Placa = m.Placa
+    });
+
+    return Results.Ok(response);
+});
+
+app.MapGet("/motos/{id}", async (string id, MotoService motoService) =>
 {
     try
     {
-        var createdMoto = await motoService.RegisterNewMotoAsync(newMoto);
-        return Results.Created($"/motos/{createdMoto.Id}", createdMoto);
+        if (string.IsNullOrWhiteSpace(id))
+            return Results.BadRequest(new { message = "Request mal Formada" });
+
+        var moto = await motoService.GetMotoByIdentifierAsync(id);
+        if (moto == null)
+            return Results.NotFound(new { message = "Moto não encontrada" });
+
+        var response = new MotoResponse
+        {
+            Identificador = moto.Identificador,
+            Ano = moto.Ano,
+            Modelo = moto.Modelo,
+            Placa = moto.Placa
+        };
+        return Results.Ok(response);
     }
     catch (Exception ex)
     {
@@ -59,14 +101,14 @@ app.MapPost("/motos", async (MotoService motoService, Moto newMoto) =>
     }
 });
 
-app.MapPut("/motos", async (int id, string license, MotoService motoService) =>
+app.MapPut("/motos/{id}/placa", async (string id, string license, MotoService motoService) =>
 {
     try
     {
         var success = await motoService.ChangeMotoLicenseAsync(id, license);
         if (success)
         {
-            return Results.Ok(new { message = "Placa atualizada com sucesso!" });
+            return Results.Ok(new { message = "Placa modificada com sucesso" });
         }
         return Results.BadRequest(new { message = "Erro ao atualizar a placa" });
     }
@@ -76,7 +118,7 @@ app.MapPut("/motos", async (int id, string license, MotoService motoService) =>
     }
 });
 
-app.MapDelete("/motos/{id}", async (int id, MotoService motoService) =>
+app.MapDelete("/motos/{id}", async (string id, MotoService motoService) =>
 {
     try
     {

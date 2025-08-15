@@ -17,13 +17,18 @@ namespace RentalApi.Infrastructure.Repositories
         {
             return await _context.Motos.ToListAsync();
         }
-        public async Task<Moto?> FindByMotoIdAsync(int id)
+        public async Task<Moto?> FindByMotoIdentifierAsync(string identifier)
         {
-            return await _context.Motos.FindAsync(id);
+            return await _context.Motos.FirstOrDefaultAsync(m => m.Identificador == identifier);
         }
         public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
             return await _context.Motos.FirstOrDefaultAsync(m => m.Placa == license);
+        }
+        public async Task<List<Moto>> SearchMotosByLicenseAsync(string license)
+        {
+            return await _context.Motos
+                .Where(m => m.Placa.Contains(license)).ToListAsync();
         }
         public async Task<Moto> AddMotoAsync(Moto moto)
         {
@@ -31,18 +36,18 @@ namespace RentalApi.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return moto;
         }
-        public async Task<bool> UpdateMotoLicenseAsync(int id, string license)
+        public async Task<bool> UpdateMotoLicenseAsync(string identifier, string license)
         {
-            var moto = await FindByMotoIdAsync(id);
+            var moto = await FindByMotoIdentifierAsync(identifier);
             if (moto == null) return false;
 
             moto.Placa = license;
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<bool> RemoveMotoAsync(int id)
+        public async Task<bool> RemoveMotoAsync(string identifier)
         {
-            var moto = await FindByMotoIdAsync(id);
+            var moto = await FindByMotoIdentifierAsync(identifier);
             if (moto == null) return false;
 
             _context.Motos.Remove(moto);

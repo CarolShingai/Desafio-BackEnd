@@ -22,15 +22,20 @@ namespace RentalApi.Infrastructure.Repositories
         {
             return await Task.FromResult(_motos);
         }
-        public async Task<Moto?> FindByMotoIdAsync(int id)
+        public async Task<Moto?> FindByMotoIdentifierAsync(string identifier)
         {
-            var moto = _motos.FirstOrDefault(m => m.Id == id);
+            var moto = _motos.FirstOrDefault(m => m.Identificador == identifier);
             return await Task.FromResult(moto);
         }
-        public async Task<Moto?> FindByMotoLicenseAsync(string placa)
+        public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
-            var moto = _motos.FirstOrDefault(m => m.Placa == placa);
+            var moto = _motos.FirstOrDefault(m => m.Placa == license);
             return await Task.FromResult(moto);
+        }
+        public async Task<List<Moto>> SearchMotosByLicenseAsync(string license)
+        {
+            var result = _motos.Where(m => m.Placa.Contains(license)).ToList();
+            return await Task.FromResult(result);
         }
         public async Task<Moto> AddMotoAsync(Moto moto)
         {
@@ -38,25 +43,21 @@ namespace RentalApi.Infrastructure.Repositories
             _motos.Add(moto);
             return await Task.FromResult(moto);
         }
-        public async Task<bool> UpdateMotoLicenseAsync(int id, string license)
+        public async Task<bool> UpdateMotoLicenseAsync(string identifier, string license)
         {
-            var moto = await FindByMotoIdAsync(id);
-            if (moto == null)
-            {
-                return false;
-            }
-            var equalLicense = await FindByMotoLicenseAsync(license);
-            if (equalLicense != null)
-            {
-                return false;
-            }
+            var moto = await FindByMotoIdentifierAsync(identifier);
+            if (moto == null) return false;
+
+            var equalLicense = await SearchMotosByLicenseAsync(license);
+            if (equalLicense != null) return false;
+
             moto.Placa = license;
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> RemoveMotoAsync(int id)
+        public async Task<bool> RemoveMotoAsync(string identifier)
         {
-            var moto = await FindByMotoIdAsync(id);
+            var moto = await FindByMotoIdentifierAsync(identifier);
             if (moto != null)
             {
                 _motos.Remove(moto);

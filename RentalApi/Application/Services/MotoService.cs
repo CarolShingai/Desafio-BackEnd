@@ -15,9 +15,9 @@ namespace RentalApi.Application.Services
         {
             return await _motoRepository.FindMotoAllAsync();
         }
-        public async Task<Moto?> GetMotoByIdAsync(int id)
+        public async Task<Moto?> GetMotoByIdentifierAsync(string identifier)
         {
-            return await _motoRepository.FindByMotoIdAsync(id);
+            return await _motoRepository.FindByMotoIdentifierAsync(identifier);
         }
         public async Task<Moto> RegisterNewMotoAsync(Moto moto)
         {
@@ -28,28 +28,28 @@ namespace RentalApi.Application.Services
             }
             return await _motoRepository.AddMotoAsync(moto);
         }
-        public async Task<bool> ChangeMotoLicenseAsync(int id, string license)
+        public async Task<bool> ChangeMotoLicenseAsync(string identifier, string license)
         {
-            var motoExist = await _motoRepository.FindByMotoIdAsync(id);
+            var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
             if (motoExist == null)
             {
                 throw new Exception("Motorcycle not found.");
             }
-                var motoComMesmaPlaca = await _motoRepository.FindByMotoLicenseAsync(license);
-            if (motoComMesmaPlaca != null && motoComMesmaPlaca.Id != id)
+            var motoSameLicense = await _motoRepository.FindByMotoLicenseAsync(license);
+            if (motoSameLicense != null && motoSameLicense.Identificador != identifier)
             {
                 throw new Exception("License plate already exists on another motorcycle.");
             }
-            return await _motoRepository.UpdateMotoLicenseAsync(id, license);
+            return await _motoRepository.UpdateMotoLicenseAsync(identifier, license);
         }
-        public async Task<bool> DeleteRegisteredMotoAsync(int id)
+        public async Task<bool> DeleteRegisteredMotoAsync(string identifier)
         {
-            var motoExist = await _motoRepository.FindByMotoIdAsync(id);
+            var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
             if (motoExist == null)
             {
                 throw new Exception("Motorcycle not found.");
             }
-            return await _motoRepository.RemoveMotoAsync(id);
+            return await _motoRepository.RemoveMotoAsync(identifier);
         }
         
     }
