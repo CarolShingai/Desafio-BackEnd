@@ -13,15 +13,15 @@ namespace RentalApi.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<List<Moto>> GetAllAsync()
+        public async Task<List<Moto>> FindMotoAllAsync()
         {
             return await _context.Motos.ToListAsync();
         }
-        public async Task<Moto?> GetByIdAsync(int id)
+        public async Task<Moto?> FindByMotoIdAsync(int id)
         {
             return await _context.Motos.FindAsync(id);
         }
-        public async Task<Moto?> GetByLicenseAsync(string license)
+        public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
             return await _context.Motos.FirstOrDefaultAsync(m => m.Placa == license);
         }
@@ -33,7 +33,7 @@ namespace RentalApi.Infrastructure.Repositories
         }
         public async Task<bool> UpdateMotoLicenseAsync(int id, string license)
         {
-            var moto = await GetByIdAsync(id);
+            var moto = await FindByMotoIdAsync(id);
             if (moto == null) return false;
 
             moto.Placa = license;
@@ -42,7 +42,7 @@ namespace RentalApi.Infrastructure.Repositories
         }
         public async Task<bool> RemoveMotoAsync(int id)
         {
-            var moto = await GetByIdAsync(id);
+            var moto = await FindByMotoIdAsync(id);
             if (moto == null) return false;
 
             _context.Motos.Remove(moto);

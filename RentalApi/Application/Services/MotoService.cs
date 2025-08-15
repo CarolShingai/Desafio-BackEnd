@@ -13,15 +13,15 @@ namespace RentalApi.Application.Services
         }
         public async Task<List<Moto>> GetAllMoto()
         {
-            return await _motoRepository.GetAllAsync();
+            return await _motoRepository.FindMotoAllAsync();
         }
         public async Task<Moto?> GetMotoByIdAsync(int id)
         {
-            return await _motoRepository.GetByIdAsync(id);
+            return await _motoRepository.FindByMotoIdAsync(id);
         }
         public async Task<Moto> RegisterNewMotoAsync(Moto moto)
         {
-            var motoExist = await _motoRepository.GetByLicenseAsync(moto.Placa);
+            var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.Placa);
             if (motoExist != null)
             {
                 throw new Exception("The motorcycle with the same license plate already exists.");
@@ -30,12 +30,12 @@ namespace RentalApi.Application.Services
         }
         public async Task<bool> ChangeMotoLicenseAsync(int id, string license)
         {
-            var motoExist = await _motoRepository.GetByIdAsync(id);
+            var motoExist = await _motoRepository.FindByMotoIdAsync(id);
             if (motoExist == null)
             {
                 throw new Exception("Motorcycle not found.");
             }
-                var motoComMesmaPlaca = await _motoRepository.GetByLicenseAsync(license);
+                var motoComMesmaPlaca = await _motoRepository.FindByMotoLicenseAsync(license);
             if (motoComMesmaPlaca != null && motoComMesmaPlaca.Id != id)
             {
                 throw new Exception("License plate already exists on another motorcycle.");
@@ -44,7 +44,7 @@ namespace RentalApi.Application.Services
         }
         public async Task<bool> DeleteRegisteredMotoAsync(int id)
         {
-            var motoExist = await _motoRepository.GetByIdAsync(id);
+            var motoExist = await _motoRepository.FindByMotoIdAsync(id);
             if (motoExist == null)
             {
                 throw new Exception("Motorcycle not found.");

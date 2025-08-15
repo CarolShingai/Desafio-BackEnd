@@ -18,16 +18,16 @@ namespace RentalApi.Infrastructure.Repositories
                 Placa = "ABC-1272"
             });
         }
-        public async Task<List<Moto>> GetAllAsync()
+        public async Task<List<Moto>> FindMotoAllAsync()
         {
             return await Task.FromResult(_motos);
         }
-        public async Task<Moto?> GetByIdAsync(int id)
+        public async Task<Moto?> FindByMotoIdAsync(int id)
         {
             var moto = _motos.FirstOrDefault(m => m.Id == id);
             return await Task.FromResult(moto);
         }
-        public async Task<Moto?> GetByLicenseAsync(string placa)
+        public async Task<Moto?> FindByMotoLicenseAsync(string placa)
         {
             var moto = _motos.FirstOrDefault(m => m.Placa == placa);
             return await Task.FromResult(moto);
@@ -40,12 +40,12 @@ namespace RentalApi.Infrastructure.Repositories
         }
         public async Task<bool> UpdateMotoLicenseAsync(int id, string license)
         {
-            var moto = await GetByIdAsync(id);
+            var moto = await FindByMotoIdAsync(id);
             if (moto == null)
             {
                 return false;
             }
-            var equalLicense = await GetByLicenseAsync(license);
+            var equalLicense = await FindByMotoLicenseAsync(license);
             if (equalLicense != null)
             {
                 return false;
@@ -56,7 +56,7 @@ namespace RentalApi.Infrastructure.Repositories
 
         public async Task<bool> RemoveMotoAsync(int id)
         {
-            var moto = await GetByIdAsync(id);
+            var moto = await FindByMotoIdAsync(id);
             if (moto != null)
             {
                 _motos.Remove(moto);
