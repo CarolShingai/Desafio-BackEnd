@@ -1,26 +1,40 @@
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using RentalApi.Application.Services;
 using RentalApi.Domain.Interfaces;
 using RentalApi.Domain.Entities;
 using RentalApi.Infrastructure.Repositories;
+using RentalApi.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serviços necessários para o Swagger
+// Swagger Services
 builder.Services.AddEndpointsApiExplorer(); // entrada
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IMotoRepository, MotoRepository>();
+// PostgreSQL
+builder.Services.AddDbContext<RentalDbContext>(options =>
+    options.UseNpgsql("Host=localhost;Database=rental_db;Username=postgres;Password=senha123"));
+
+// Dependencies
+builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
 builder.Services.AddScoped<MotoService>();
 
 var app = builder.Build();
 
-// Ativar o Swagger apenas em desenvolvimento
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var context = scope.ServiceProvider.GetRequiredService<RentalDbContext>();
+    context.Database.EnsureCreated();
 }
+
+
+// Activate Swagger over development
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
 app.MapGet("/motos", async (MotoService motoService) => {
     var motos = await motoService.GetAllMoto();
