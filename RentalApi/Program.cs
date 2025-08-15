@@ -28,7 +28,6 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-
 // Activate Swagger over development
     if (app.Environment.IsDevelopment())
     {
