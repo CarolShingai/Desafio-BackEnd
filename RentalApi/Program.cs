@@ -14,8 +14,9 @@ builder.Services.AddEndpointsApiExplorer(); // entrada
 builder.Services.AddSwaggerGen();
 
 // PostgreSQL
+var connString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 builder.Services.AddDbContext<RentalDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Database=rental_db;Username=postgres;Password=senha123"));
+    options.UseNpgsql(connString));
 
 // Dependencies
 builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
