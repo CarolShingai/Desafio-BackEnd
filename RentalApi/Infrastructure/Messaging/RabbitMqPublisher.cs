@@ -26,16 +26,21 @@ namespace RentalApi.Infrastructure.Messaging
 
         public void Publish<T>(T message, string queueName)
         {
+            PublishAsync(message, queueName, CancellationToken.None).GetAwaiter().GetResult();
+        }
+
+        public async Task PublishAsync<T>(T message, string queueName, CancellationToken cancellationToken = default)
+        {
             if (message == null) throw new ArgumentNullException(nameof(message));
-            if (string.IsNullOrWhiteSpace(queueName)) 
+            if (string.IsNullOrWhiteSpace(queueName))
                 throw new ArgumentException("Queue name is required", nameof(queueName));
 
             try
             {
-                using var connection = _factory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var connection = await _factory.CreateConnectionAsync();
+                using var channel = await connection.CreateChannelAsync();
 
-                channel.QueueDeclare(
+                await channel.QueueDeclareAsync(
                     queue: queueName,
                     durable: true,
                     exclusive: false,
@@ -46,14 +51,17 @@ namespace RentalApi.Infrastructure.Messaging
                 var json = JsonSerializer.Serialize(message);
                 var body = Encoding.UTF8.GetBytes(json);
 
-                var properties = channel.CreateBasicProperties();
-                properties.Persistent = true;
+                var properties = new BasicProperties
+                {
+                    Persistent = true
+                };
 
-                channel.BasicPublish(
+                await channel.BasicPublishAsync(
                     exchange: "",
                     routingKey: queueName,
+                    body: body,
                     basicProperties: properties,
-                    body: body
+                    mandatory: true
                 );
             }
             catch (Exception ex)

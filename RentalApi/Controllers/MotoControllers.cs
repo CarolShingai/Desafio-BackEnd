@@ -9,7 +9,7 @@ namespace RentalApi.Controllers
     /// Controller responsável pelo gerenciamento de motos.
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("moto")]
     public class MotoControllers : ControllerBase
     {
         private readonly MotoService _motoService;
@@ -115,7 +115,7 @@ namespace RentalApi.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        
+
         /// <summary>
         /// Remove uma moto pelo identificador.
         /// </summary>
