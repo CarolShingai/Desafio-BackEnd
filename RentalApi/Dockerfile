@@ -1,14 +1,16 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS dev
 WORKDIR /app
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
-COPY . .
-RUN dotnet restore RentalApi.csproj
-RUN dotnet publish RentalApi.csproj -c Release -o /app/publish
+# Copia apenas arquivos essenciais para restaurar dependências
+COPY RentalApi.csproj ./
+RUN dotnet restore
 
-FROM base AS final
-WORKDIR /app
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "RentalApi.dll"]
+# Copia o restante do código para o container
+COPY . .
+
+# Variável de ambiente para modo Development
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+# Permite hot reload e mapeia volume do código
+CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
