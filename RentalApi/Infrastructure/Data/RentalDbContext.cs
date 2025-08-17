@@ -37,7 +37,7 @@ namespace RentalApi.Infrastructure.Data
             });
             // Seed initial data for Moto entity
             modelBuilder.Entity<Moto>().HasData(
-                new Moto { Id = 1, Identificador = "moto123", Ano = 2020, Modelo = "Mottu Sport", Placa = "CDX-0101" }
+                new Moto { Id = 1, Identificador = "moto123", Ano = 2020, Modelo = "Mottu Sport", Placa = "CDX-0101", IsRented = true }
             );
         }
     }

@@ -19,7 +19,7 @@ builder.Services.AddDbContext<RentalDbContext>(options =>
 
 // Dependencies
 builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
-builder.Services.AddScoped<MotoService>();
+builder.Services.AddScoped<IMotoService, MotoService>();
 
 //Controllers
 builder.Services.AddControllers();

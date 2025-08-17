@@ -21,7 +21,9 @@ namespace RentalApi.Infrastructure.Repositories
                 Id = 1,
                 Ano = 2023,
                 Modelo = "XL200",
-                Placa = "ABC-1272"
+                Placa = "ABC-1272",
+                Identificador = "Moto-001",
+                IsRented = false
             });
         }
         /// <summary>
@@ -98,12 +100,13 @@ namespace RentalApi.Infrastructure.Repositories
         public async Task<bool> RemoveMotoAsync(string identifier)
         {
             var moto = await FindByMotoIdentifierAsync(identifier);
-            if (moto != null)
-            {
-                _motos.Remove(moto);
-                return await Task.FromResult(true);
-            }
-            return await Task.FromResult(false);
+            if (moto == null)
+                return await Task.FromResult(false);
+
+            if (moto.IsRented)
+                throw new Exception("Cannot delete a motorcycle that is currently rented.");
+            _motos.Remove(moto);
+            return await Task.FromResult(true);
         }
     }
 }

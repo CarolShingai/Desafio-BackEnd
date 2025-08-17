@@ -100,7 +100,9 @@ namespace RentalApi.Infrastructure.Repositories
         {
             var moto = await FindByMotoIdentifierAsync(identifier);
             if (moto == null) return false;
-
+            
+            if (moto.IsRented)
+                throw new Exception("Cannot delete a motorcycle that is currently rented.");
             _context.Motos.Remove(moto);
             await _context.SaveChangesAsync();
             return true;

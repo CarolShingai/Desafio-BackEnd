@@ -30,5 +30,6 @@ namespace RentalApi.Domain.Entities
         /// License plate of the motorcycle.
         /// </summary>
         public string Placa { get; set; } = string.Empty;
+        public bool IsRented { get; set; } = false;
     }
 }
