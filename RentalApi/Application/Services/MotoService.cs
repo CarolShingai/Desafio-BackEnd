@@ -6,7 +6,7 @@ namespace RentalApi.Application.Services
     /// <summary>
     /// Service class for business logic related to Moto operations.
     /// </summary>
-    public class MotoService
+    public class MotoService : IMotoService
     {
         /// <summary>
         /// Repository for Moto data access.
