@@ -12,16 +12,16 @@ namespace RentalApi.Application.Services
         /// Repository for Moto data access.
         /// </summary>
         public readonly IMotoRepository _motoRepository;
-
+            public IMessagePublisher _messagePublisher;
         /// <summary>
         /// Initializes a new instance of the MotoService class.
         /// </summary>
         /// <param name="motoRepository">Repository for Moto operations.</param>
-        public MotoService(IMotoRepository motoRepository)
+        public MotoService(IMotoRepository motoRepository, IMessagePublisher messagePublisher)
         {
             _motoRepository = motoRepository;
+            _messagePublisher = messagePublisher;
         }
-
         /// <summary>
         /// Gets all motorcycles from the repository.
         /// </summary>
@@ -51,9 +51,11 @@ namespace RentalApi.Application.Services
         {
             var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.Placa);
             if (motoExist != null)
-            {
                 throw new Exception("The motorcycle with the same license plate already exists.");
-            }
+
+            moto.Message = $"Moto com placa {moto.Placa} registrada!";
+            moto.NotifiedAt = DateTime.UtcNow;
+            await _messagePublisher.PublishAsync(moto, "motoQueue");
             return await _motoRepository.AddMotoAsync(moto);
         }
 
@@ -68,14 +70,10 @@ namespace RentalApi.Application.Services
         {
             var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
             if (motoExist == null)
-            {
                 throw new Exception("Motorcycle not found.");
-            }
             var motoSameLicense = await _motoRepository.FindByMotoLicenseAsync(license);
             if (motoSameLicense != null && motoSameLicense.Identificador != identifier)
-            {
                 throw new Exception("License plate already exists on another motorcycle.");
-            }
             return await _motoRepository.UpdateMotoLicenseAsync(identifier, license);
         }
 
@@ -89,9 +87,7 @@ namespace RentalApi.Application.Services
         {
             var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
             if (motoExist == null)
-            {
                 throw new Exception("Motorcycle not found.");
-            }
             return await _motoRepository.RemoveMotoAsync(identifier);
         }
     }

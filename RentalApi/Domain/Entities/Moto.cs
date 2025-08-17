@@ -31,5 +31,8 @@ namespace RentalApi.Domain.Entities
         /// </summary>
         public string Placa { get; set; } = string.Empty;
         public bool IsRented { get; set; } = false;
+
+        public DateTime NotifiedAt { get; set; }
+        public string Message { get; set; } = string.Empty;
     }
 }

@@ -1,17 +1,40 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using RentalApi.Application.DTOs;
+using RentalApi.Infrastructure.Data;
 using Xunit;
 
-public class MotoControllersTests : IClassFixture<WebApplicationFactory<Program>>
+public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-	private readonly HttpClient _client;
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<RentalDbContext>));
+            if (descriptor != null)
+                services.Remove(descriptor);
 
-	public MotoControllersTests(WebApplicationFactory<Program> factory)
-	{
-		_client = factory.CreateClient();
-	}
+            services.AddDbContext<RentalDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("TestDb" + Guid.NewGuid());
+            });
+        });
+    }
+}
+
+public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
+{
+    private readonly HttpClient _client;
+
+    public MotoControllersTests(CustomWebApplicationFactory factory)
+    {
+        _client = factory.CreateClient();
+    }
 
 	[Fact]
 	public async Task PostMoto_ShouldReturnCreated()

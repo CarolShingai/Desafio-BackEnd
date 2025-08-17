@@ -1,0 +1,14 @@
+# Dockerfile.test
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+# Copia a solução e os projetos
+COPY *.sln ./
+COPY RentalApi/ ./RentalApi/
+COPY Tests/RentalApi.Tests/ ./Tests/RentalApi.Tests/
+
+# Restaura dependências de todos os projetos
+RUN dotnet restore
+
+# Comando padrão para rodar todos os testes
+CMD ["dotnet", "test", "./Tests/RentalApi.Tests/", "--verbosity", "normal"]
