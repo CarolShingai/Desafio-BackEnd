@@ -34,9 +34,10 @@ services:
       - rabbitmq
     profiles:
       - test  # Só roda quando especificado
+    command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--logger", "console;verbosity=detailed"]
 
-  # Serviço para rodar testes individuais
-  test:
+  # Serviço para rodar testes unitários
+  test-unit:
     build:
       context: .
       dockerfile: Tests/RentalApi.Tests/Dockerfile.test
@@ -50,7 +51,39 @@ services:
       RabbitMQ__Password: ${RABBITMQ_PASS}
     depends_on:
       - rabbitmq
-    command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--logger", "console;verbosity=detailed"]
+    profiles:
+      - test-unit
+    command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--filter", "Category!=Integration", "--logger", "console;verbosity=detailed"]
+
+  # Serviço para rodar testes de integração RabbitMQ
+  test-rabbitmq:
+    build:
+      context: .
+      dockerfile: Tests/RentalApi.Tests/Dockerfile.test
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_TEST}
+      RabbitMQ__Host: ${RABBITMQ_HOST}
+      RabbitMQ__Username: ${RABBITMQ_USER}
+      RabbitMQ__Password: ${RABBITMQ_PASS}
+    depends_on:
+      - rabbitmq
+    profiles:
+      - test-rabbitmq
+    command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--filter", "FullyQualifiedName~RabbitMq", "--logger", "console;verbosity=detailed"]
+
+  # Serviço para rodar apenas testes que não precisam de RabbitMQ
+  test-db:
+    build:
+      context: .
+      dockerfile: Tests/RentalApi.Tests/Dockerfile.test
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing
+    profiles:
+      - test-db
+    command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--filter", "FullyQualifiedName~Repository", "--logger", "console;verbosity=detailed"]
 
   # Serviço para testes de integração com RabbitMQ
   integration-test:
@@ -62,6 +95,8 @@ services:
     environment:
       DOCKER_HOST: unix:///var/run/docker.sock
     privileged: true
+    profiles:
+      - integration-test
     command: ["dotnet", "test", "./Tests/RentalApi.Tests/", "--verbosity", "normal", "--filter", "FullyQualifiedName~RabbitMqIntegrationTests"]
 
   # Banco para testes
