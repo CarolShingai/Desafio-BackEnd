@@ -1,0 +1,12 @@
+# Dockerfile.test
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+# Copia todo o projeto (incluindo a pasta de testes)
+COPY . .
+
+# Restaura dependências de todos os projetos
+RUN dotnet restore
+
+# Comando padrão para rodar todos os testes
+CMD ["dotnet", "test", "--verbosity", "normal"]

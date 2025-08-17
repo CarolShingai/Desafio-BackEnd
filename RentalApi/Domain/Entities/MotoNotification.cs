@@ -1,7 +1,7 @@
 
 namespace RentalApi.Domain.Entities
 {
-	public class MotoNotifier
+	public class MotoNotification
 	{
 		public Guid Id { get; set; }
 		public string MotorcycleId { get; set; } = string.Empty;
@@ -11,9 +11,9 @@ namespace RentalApi.Domain.Entities
 		public DateTime NotifiedAt { get; set; }
 		public string Message { get; set; } = string.Empty;
 
-		public MotoNotifier() {}
+		public MotoNotification() {}
 
-		public MotoNotifier(string motorcycleId, int year, string model, string licensePlate)
+		public MotoNotification(string motorcycleId, int year, string model, string licensePlate)
 		{
 			Id = Guid.NewGuid();
 			MotorcycleId = motorcycleId;

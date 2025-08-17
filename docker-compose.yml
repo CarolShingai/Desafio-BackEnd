@@ -19,6 +19,40 @@ services:
       - db
       - rabbitmq
 
+  tests:
+    build:
+      context: ./Tests/RentalApi.Tests
+      dockerfile: Dockerfile.test
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_TEST}
+      RabbitMQ__Host: ${RABBITMQ_HOST}
+      RabbitMQ__Username: ${RABBITMQ_USER}
+      RabbitMQ__Password: ${RABBITMQ_PASS}
+    depends_on:
+      - db-test
+      - rabbitmq
+    profiles:
+      - test  # Só roda quando especificado
+
+  # Banco para testes
+  db-test:
+    image: postgres:16
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata-test:/var/lib/postgresql/data
+    profiles:
+      - test
+
   db:
     image: postgres:16
     env_file:

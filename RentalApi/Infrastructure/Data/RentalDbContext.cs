@@ -18,6 +18,7 @@ namespace RentalApi.Infrastructure.Data
         /// DbSet representing the motorcycles table.
         /// </summary>
         public DbSet<Moto> Motos { get; set; }
+        public DbSet<MotoNotification> MotoNotifications { get; set; }
 
         /// <summary>
         /// Configures the entity mappings and seeds initial data.
@@ -34,6 +35,13 @@ namespace RentalApi.Infrastructure.Data
                 entity.Property(m => m.Placa).IsRequired().HasMaxLength(10);
                 entity.Property(m => m.Modelo).IsRequired().HasMaxLength(100);
                 entity.Property(m => m.Ano).IsRequired();
+            });
+                    modelBuilder.Entity<MotoNotification>(entity =>
+            {
+                entity.HasKey(n => n.Id);
+                entity.Property(n => n.Message).IsRequired();
+                entity.Property(n => n.NotifiedAt).IsRequired();
+                // Adicione outras propriedades conforme sua entidade
             });
             // Seed initial data for Moto entity
             modelBuilder.Entity<Moto>().HasData(

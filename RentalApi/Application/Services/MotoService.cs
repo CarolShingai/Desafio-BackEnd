@@ -52,12 +52,12 @@ namespace RentalApi.Application.Services
             var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.Placa);
             if (motoExist != null)
                 throw new Exception("The motorcycle with the same license plate already exists.");
-            if (moto.Ano == 2024)
-            {
+            // if (moto.Ano == 2024)
+            // {
                 // Publish a message to the queue
                 var message = new { Texto = "Moto registrada!", Dados = moto };
-                await _messagePublisher.PublishAsync(message, "moto_queue");
-            }
+                await _messagePublisher.PublishAsync(message, "motoQueue");
+            // }
             return await _motoRepository.AddMotoAsync(moto);
         }
 
