@@ -25,15 +25,22 @@ namespace RentalApi.Infrastructure.Background
                 {
                     if (moto.Ano == 2024)
                     {
-                        using var scope = _serviceProvider.CreateAsyncScope();
-                        var motoRepo2024 = scope.ServiceProvider.GetRequiredService<IMotoNotificationRepository>();
+                        using var innerScope = _serviceProvider.CreateAsyncScope();
+                        var notificationRepo = innerScope.ServiceProvider.GetRequiredService<IMotoNotificationRepository>();
                         var notification = new MotoNotification
                         {
                             MotorcycleId = moto.Identificador,
                             Message = "Moto registered successfully!",
                             NotifiedAt = DateTime.UtcNow
                         };
-                        await motoRepo2024.AddNotificationAsync(notification);
+                        try
+                        {
+                            await notificationRepo.AddNotificationAsync(notification);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Erro ao adicionar notificação: {ex.Message}");
+                        }
                     }
                 }, stoppingToken);
         }

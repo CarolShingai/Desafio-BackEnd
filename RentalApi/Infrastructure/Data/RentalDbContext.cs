@@ -36,12 +36,12 @@ namespace RentalApi.Infrastructure.Data
                 entity.Property(m => m.Modelo).IsRequired().HasMaxLength(100);
                 entity.Property(m => m.Ano).IsRequired();
             });
-                    modelBuilder.Entity<MotoNotification>(entity =>
+            modelBuilder.Entity<MotoNotification>(entity =>
             {
                 entity.HasKey(n => n.Id);
                 entity.Property(n => n.Message).IsRequired();
                 entity.Property(n => n.NotifiedAt).IsRequired();
-                // Adicione outras propriedades conforme sua entidade
+                entity.HasIndex(n => n.MotorcycleId);
             });
             // Seed initial data for Moto entity
             modelBuilder.Entity<Moto>().HasData(

@@ -50,28 +50,28 @@ namespace RentalApi.Infrastructure.Messaging
 
             consumer.ReceivedAsync += async (model, ea) =>
             {
-                    try
+                try
+                {
+                    var body = ea.Body.ToArray();
+                    var json = Encoding.UTF8.GetString(body);
+                    Console.WriteLine($"[RabbitMqConsumer] Mensagem recebida: {json}");
+                    var message = JsonSerializer.Deserialize<T>(json);
+                    if (message == null)
                     {
-                        var body = ea.Body.ToArray();
-                        var json = Encoding.UTF8.GetString(body);
-                        Console.WriteLine($"[RabbitMqConsumer] Mensagem recebida: {json}");
-                        var message = JsonSerializer.Deserialize<T>(json);
-                        if (message == null)
-                        {
-                            Console.WriteLine("[RabbitMqConsumer] Falha na desserialização. Tipo esperado: " + typeof(T).Name);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[RabbitMqConsumer] Mensagem desserializada com sucesso. Tipo: {typeof(T).Name}");
-                            await onMessageAsync(message);
-                        }
-                        await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+                        Console.WriteLine("[RabbitMqConsumer] Falha na desserialização. Tipo esperado: " + typeof(T).Name);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine($"[RabbitMqConsumer] Erro ao processar mensagem: {ex.Message}\nStackTrace: {ex.StackTrace}");
-                        await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false);
+                        Console.WriteLine($"[RabbitMqConsumer] Mensagem desserializada com sucesso. Tipo: {typeof(T).Name}");
+                        await onMessageAsync(message);
                     }
+                    await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[RabbitMqConsumer] Erro ao processar mensagem: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                    await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false);
+                }
             };
             var consumerTag = await _channel.BasicConsumeAsync(
                 queue: queueName,
@@ -80,20 +80,5 @@ namespace RentalApi.Infrastructure.Messaging
             );
             _activeConsumers[queueName] = consumerTag;
         }
-        // public async ValueTask DisposeAsync()
-        // {
-        //     if (_channel != null)
-        //     {
-        //         await _channel.CloseAsync();
-        //         await _channel.DisposeAsync();
-        //         _channel = null;
-        //     }
-        //     if (_connection != null)
-        //     {
-        //         await _connection.CloseAsync();
-        //         await _connection.DisposeAsync();
-        //         _connection = null;
-        //     }
-        // }
     }
 } 

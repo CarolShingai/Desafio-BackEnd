@@ -14,9 +14,8 @@ builder.Services.AddEndpointsApiExplorer(); // entrada
 builder.Services.AddSwaggerGen();
 
 // PostgreSQL
-var connString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 builder.Services.AddDbContext<RentalDbContext>(options =>
-    options.UseNpgsql(connString));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Dependencies
 builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
