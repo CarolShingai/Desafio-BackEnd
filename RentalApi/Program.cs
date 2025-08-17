@@ -5,6 +5,7 @@ using RentalApi.Domain.Interfaces;
 using RentalApi.Domain.Entities;
 using RentalApi.Infrastructure.Repositories;
 using RentalApi.Infrastructure.Data;
+using RentalApi.Infrastructure.Messaging;
 using RentalApi.Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<RentalDbContext>(options =>
 
 // Dependencies
 builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
+builder.Services.AddScoped<IMessagePublisher, RabbitMqPublisher>();
 builder.Services.AddScoped<MotoService>();
 
 //Controllers
