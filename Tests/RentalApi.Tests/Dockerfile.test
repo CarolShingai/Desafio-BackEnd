@@ -2,11 +2,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0
 WORKDIR /app
 
-# Copia todo o projeto (incluindo a pasta de testes)
-COPY . .
+# Copia a solução e os projetos
+COPY *.sln ./
+COPY RentalApi/ ./RentalApi/
+COPY Tests/RentalApi.Tests/ ./Tests/RentalApi.Tests/
 
 # Restaura dependências de todos os projetos
 RUN dotnet restore
 
 # Comando padrão para rodar todos os testes
-CMD ["dotnet", "test", "--verbosity", "normal"]
+CMD ["dotnet", "test", "./Tests/RentalApi.Tests/", "--verbosity", "normal"]

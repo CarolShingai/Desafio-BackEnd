@@ -1,0 +1,28 @@
+# Dockerfile para testes de integração
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+# Instalar Docker CLI para Testcontainers
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+RUN apt-get update && apt-get install -y docker-ce-cli
+
+# Copia a solução e os projetos
+COPY *.sln ./
+COPY RentalApi/ ./RentalApi/
+COPY Tests/RentalApi.Tests/ ./Tests/RentalApi.Tests/
+
+# Restaura dependências
+RUN dotnet restore
+
+# Comando padrão para rodar os testes de integração
+CMD ["dotnet", "test", "./Tests/RentalApi.Tests/", "--verbosity", "normal", "--filter", "FullyQualifiedName~RabbitMqIntegrationTests"]

@@ -12,13 +12,14 @@ namespace Tests.RentalApi.Tests
         public async Task GetAllMoto_ShouldReturnAllMotos()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var expectedMotos = new List<Moto>
             {
                 new Moto { Identificador = "moto1", Modelo = "Honda CB", Placa = "ABC-1234", Ano = 2023 },
                 new Moto { Identificador = "moto2", Modelo = "Yamaha MT", Placa = "XYZ-5678", Ano = 2024 }
             };
             mockRepository.Setup(r => r.FindMotoAllAsync()).ReturnsAsync(expectedMotos);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.GetAllMoto();
 
@@ -31,8 +32,9 @@ namespace Tests.RentalApi.Tests
         public async Task GetAllMoto_EmptyList_ShouldReturnEmptyList()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             mockRepository.Setup(r => r.FindMotoAllAsync()).ReturnsAsync(new List<Moto>());
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.GetAllMoto();
 
@@ -44,9 +46,10 @@ namespace Tests.RentalApi.Tests
         public async Task GetMotoByIdentifierAsync_MotoExists_ShouldReturnMoto()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var expectedMoto = new Moto { Identificador = "moto1", Modelo = "Honda CB", Placa = "ABC-1234" };
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("moto1")).ReturnsAsync(expectedMoto);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.GetMotoByIdentifierAsync("moto1");
 
@@ -59,8 +62,9 @@ namespace Tests.RentalApi.Tests
         public async Task GetMotoByIdentifierAsync_MotoDoesNotExist_ShouldReturnNull()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("notfound")).ReturnsAsync((Moto?)null);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.GetMotoByIdentifierAsync("notfound");
 
@@ -73,10 +77,11 @@ namespace Tests.RentalApi.Tests
         public async Task RegisterNewMotoAsync_DuplicateLicense_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var existingMoto = new Moto { Identificador = "moto1", Placa = "ABC-1234" };
             var newMoto = new Moto { Placa = "ABC-1234", Modelo = "Honda", Ano = 2023 };
             mockRepository.Setup(r => r.FindByMotoLicenseAsync("ABC-1234")).ReturnsAsync(existingMoto);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var exception = await Assert.ThrowsAsync<Exception>(() => service.RegisterNewMotoAsync(newMoto));
             Assert.Equal("The motorcycle with the same license plate already exists.", exception.Message);
@@ -86,11 +91,12 @@ namespace Tests.RentalApi.Tests
         public async Task ChangeMotoLicenseAsync_MotoExists_UniqueLicense_ShouldUpdateSuccessfully()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var existingMoto = new Moto { Identificador = "moto1", Modelo = "Honda", Placa = "ABC-1234", Ano = 2023 };
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("moto1")).ReturnsAsync(existingMoto);
             mockRepository.Setup(r => r.FindByMotoLicenseAsync("NEW-5678")).ReturnsAsync((Moto?)null);
             mockRepository.Setup(r => r.UpdateMotoLicenseAsync("moto1", "NEW-5678")).ReturnsAsync(true);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.ChangeMotoLicenseAsync("moto1", "NEW-5678");
 
@@ -102,8 +108,9 @@ namespace Tests.RentalApi.Tests
         public async Task ChangeMotoLicenseAsync_MotoDoesNotExist_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("notfound")).ReturnsAsync((Moto?)null);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var exception = await Assert.ThrowsAsync<Exception>(() => service.ChangeMotoLicenseAsync("notfound", "NEW-5678"));
             Assert.Equal("Motorcycle not found.", exception.Message);
@@ -113,11 +120,12 @@ namespace Tests.RentalApi.Tests
         public async Task ChangeMotoLicenseAsync_LicenseAlreadyExists_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var existingMoto = new Moto { Identificador = "moto1", Modelo = "Honda", Placa = "ABC-1234" };
             var otherMoto = new Moto { Identificador = "moto2", Modelo = "Yamaha", Placa = "XYZ-5678" };
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("moto1")).ReturnsAsync(existingMoto);
             mockRepository.Setup(r => r.FindByMotoLicenseAsync("XYZ-5678")).ReturnsAsync(otherMoto);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var exception = await Assert.ThrowsAsync<Exception>(() => service.ChangeMotoLicenseAsync("moto1", "XYZ-5678"));
             Assert.Equal("License plate already exists on another motorcycle.", exception.Message);
@@ -127,11 +135,12 @@ namespace Tests.RentalApi.Tests
         public async Task ChangeMotoLicenseAsync_SameMoto_SameLicense_ShouldAllow()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var existingMoto = new Moto { Identificador = "moto1", Modelo = "Honda", Placa = "ABC-1234" };
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("moto1")).ReturnsAsync(existingMoto);
             mockRepository.Setup(r => r.FindByMotoLicenseAsync("ABC-1234")).ReturnsAsync(existingMoto);
             mockRepository.Setup(r => r.UpdateMotoLicenseAsync("moto1", "ABC-1234")).ReturnsAsync(true);
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.ChangeMotoLicenseAsync("moto1", "ABC-1234");
 
@@ -142,12 +151,13 @@ namespace Tests.RentalApi.Tests
         public async Task DeleteRegisteredMotoAsync_MotoExists_ShouldRemoveSuccessfully()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             var existingMoto = new Moto { Identificador = "moto1", Modelo = "Honda", Placa = "ABC-1234" };
 
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("moto1")).ReturnsAsync(existingMoto);
             mockRepository.Setup(r => r.RemoveMotoAsync("moto1")).ReturnsAsync(true);
 
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var result = await service.DeleteRegisteredMotoAsync("moto1");
 
@@ -159,9 +169,10 @@ namespace Tests.RentalApi.Tests
         public async Task DeleteRegisteredMotoAsync_MotoDoesNotExist_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
+            var mockPublisher = new Mock<IMessagePublisher>();
             mockRepository.Setup(r => r.FindByMotoIdentifierAsync("notfound")).ReturnsAsync((Moto?)null);
 
-            var service = new MotoService(mockRepository.Object);
+            var service = new MotoService(mockRepository.Object, mockPublisher.Object);
 
             var exception = await Assert.ThrowsAsync<Exception>(() => service.DeleteRegisteredMotoAsync("notfound"));
             Assert.Equal("Motorcycle not found.", exception.Message);

@@ -20,8 +20,8 @@ builder.Services.AddDbContext<RentalDbContext>(options =>
 // Dependencies
 builder.Services.AddScoped<IMotoRepository, MotoRepositoryEF>();
 builder.Services.AddScoped<MotoService>();
-builder.Services.AddScoped<IMessagePublisher, RabbitMqPublisher>();
-builder.Services.AddScoped<IMessageConsumer, RabbitMqConsumer>();
+builder.Services.AddSingleton<IMessageConsumer, RabbitMqConsumer>();
+builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 
 // Background Services
 builder.Services.AddHostedService<RabbitMqBackgroundService>();
