@@ -12,8 +12,8 @@ using RentalApi.Infrastructure.Data;
 namespace RentalApi.Migrations
 {
     [DbContext(typeof(RentalDbContext))]
-    [Migration("20250817181058_AddMotoNotificationsTable")]
-    partial class AddMotoNotificationsTable
+    [Migration("20250818045512_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,52 @@ namespace RentalApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("RentalApi.Domain.Entities.DeliveryPerson", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BirthDate")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Cnh")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)");
+
+                    b.Property<string>("CnhImage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CnhType")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("Cnpj")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("character varying(14)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Cnh")
+                        .IsUnique();
+
+                    b.HasIndex("Cnpj")
+                        .IsUnique();
+
+                    b.ToTable("DeliveryPersons");
+                });
 
             modelBuilder.Entity("RentalApi.Domain.Entities.Moto", b =>
                 {
@@ -40,6 +86,9 @@ namespace RentalApi.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsRented")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -74,6 +123,7 @@ namespace RentalApi.Migrations
                             Id = 1,
                             Ano = 2020,
                             Identificador = "moto123",
+                            IsRented = true,
                             Message = "",
                             Modelo = "Mottu Sport",
                             NotifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),

@@ -10,6 +10,7 @@ namespace RentalApi.Controllers
     /// </summary>
     [ApiController]
     [Route("moto")]
+    [Tags("motos")]
     public class MotoControllers : ControllerBase
     {
         private readonly MotoService _motoService;

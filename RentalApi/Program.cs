@@ -23,6 +23,10 @@ builder.Services.AddScoped<MotoService>();
 builder.Services.AddSingleton<IMessageConsumer, RabbitMqConsumer>();
 builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 
+// DeliveryPerson Dependencies
+builder.Services.AddScoped<IDeliveryPerson, DeliveryRepository>();
+builder.Services.AddScoped<IDeliveryPersonService, DeliveryPersonService>();
+
 // Background Services
 builder.Services.AddHostedService<RabbitMqBackgroundService>();
 

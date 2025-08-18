@@ -12,11 +12,15 @@ namespace RentalApi.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<DeliveryPerson?> GetDeliveryPersonByCnpjAsync(string cnpj)
+        public async Task<DeliveryPerson?> FindDeliveryPersonByIdAsync(Guid id)
+        {
+            return await _context.DeliveryPersons.FindAsync(id);
+        }
+        public async Task<DeliveryPerson?> FindDeliveryPersonByCnpjAsync(string cnpj)
         {
             return await _context.DeliveryPersons.FirstOrDefaultAsync(d => d.Cnpj == cnpj);
         }
-        public async Task<DeliveryPerson?> GetDeliveryPersonByCnhAsync(string cnh)
+        public async Task<DeliveryPerson?> FindDeliveryPersonByCnhAsync(string cnh)
         {
             return await _context.DeliveryPersons.FirstOrDefaultAsync(d => d.Cnh == cnh);
         }
@@ -24,7 +28,7 @@ namespace RentalApi.Infrastructure.Repositories
         {
             if (string.IsNullOrWhiteSpace(cnpj))
                 return false;
-            var delivery = await GetDeliveryPersonByCnpjAsync(cnpj);
+            var delivery = await FindDeliveryPersonByCnpjAsync(cnpj);
             if (delivery != null)
                 return false;
             var cnpjWithoutDots = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
@@ -38,7 +42,7 @@ namespace RentalApi.Infrastructure.Repositories
         {
             if (string.IsNullOrWhiteSpace(cnh))
                 return false;
-            var delivery = await GetDeliveryPersonByCnhAsync(cnh);
+            var delivery = await FindDeliveryPersonByCnhAsync(cnh);
             if (delivery != null)
                 return false;
             var cnhWithoutDots = cnh.Replace(".", "").Replace("-", "");
@@ -67,6 +71,20 @@ namespace RentalApi.Infrastructure.Repositories
             _context.DeliveryPersons.Add(deliveryPerson);
             await _context.SaveChangesAsync();
             return deliveryPerson;
+        }
+        public async Task<bool> AddCnhImageAsync(Guid deliveryPersonId, string base64Image)
+        {
+            if (string.IsNullOrWhiteSpace(base64Image))
+                throw new ArgumentException("Base64 image cannot be null or empty", nameof(base64Image));
+
+            var deliveryPerson = await FindDeliveryPersonByIdAsync(deliveryPersonId);
+            if (deliveryPerson == null)
+                return false;
+
+            deliveryPerson.CnhImage = base64Image;
+            _context.DeliveryPersons.Update(deliveryPerson);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
