@@ -1,0 +1,72 @@
+using Microsoft.EntityFrameworkCore;
+using RentalApi.Domain.Entities;
+using RentalApi.Domain.Interfaces;
+using RentalApi.Infrastructure.Data;
+
+namespace RentalApi.Infrastructure.Repositories
+{
+    public class DeliveryRepository : IDeliveryPerson
+    {
+        private readonly RentalDbContext _context;
+        public DeliveryRepository(RentalDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<DeliveryPerson?> GetDeliveryPersonByCnpjAsync(string cnpj)
+        {
+            return await _context.DeliveryPersons.FirstOrDefaultAsync(d => d.Cnpj == cnpj);
+        }
+        public async Task<DeliveryPerson?> GetDeliveryPersonByCnhAsync(string cnh)
+        {
+            return await _context.DeliveryPersons.FirstOrDefaultAsync(d => d.Cnh == cnh);
+        }
+        public async Task<bool> ValidateCnpjAsync(string cnpj)
+        {
+            if (string.IsNullOrWhiteSpace(cnpj))
+                return false;
+            var delivery = await GetDeliveryPersonByCnpjAsync(cnpj);
+            if (delivery != null)
+                return false;
+            var cnpjWithoutDots = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+            if (cnpjWithoutDots.Length != 14)
+                return false;
+            if (!long.TryParse(cnpjWithoutDots, out _))
+                return false;
+            return true;
+        }
+        public async Task<bool> ValidateCnhAsync(string cnh)
+        {
+            if (string.IsNullOrWhiteSpace(cnh))
+                return false;
+            var delivery = await GetDeliveryPersonByCnhAsync(cnh);
+            if (delivery != null)
+                return false;
+            var cnhWithoutDots = cnh.Replace(".", "").Replace("-", "");
+            if (cnhWithoutDots.Length != 11)
+                return false;
+            if (!long.TryParse(cnhWithoutDots, out _))
+                return false;
+            return true;
+        }
+        public bool IsValidCnhType(string cnhType)
+        {
+            var ValidCnhType = new[] { "A", "B", "A + B" };
+            return ValidCnhType.Contains(cnhType);
+        }
+        public async Task<DeliveryPerson> AddDeliveryPersonAsync(DeliveryPerson deliveryPerson)
+        {
+            if (deliveryPerson == null)
+                throw new ArgumentNullException(nameof(deliveryPerson));
+            if (!await ValidateCnpjAsync(deliveryPerson.Cnpj))
+                throw new ArgumentException("Invalid CNPJ");
+            if (!await ValidateCnhAsync(deliveryPerson.Cnh))
+                throw new ArgumentException("Invalid CNH");
+            if (!IsValidCnhType(deliveryPerson.CnhType))
+                throw new ArgumentException("Invalid CNH Type");
+
+            _context.DeliveryPersons.Add(deliveryPerson);
+            await _context.SaveChangesAsync();
+            return deliveryPerson;
+        }
+    }
+}

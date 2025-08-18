@@ -19,6 +19,7 @@ namespace RentalApi.Infrastructure.Data
         /// </summary>
         public DbSet<Moto> Motos { get; set; }
         public DbSet<MotoNotification> MotoNotifications { get; set; }
+        public DbSet<DeliveryPerson> DeliveryPersons { get; set; }
 
         /// <summary>
         /// Configures the entity mappings and seeds initial data.
@@ -42,6 +43,18 @@ namespace RentalApi.Infrastructure.Data
                 entity.Property(n => n.Message).IsRequired();
                 entity.Property(n => n.NotifiedAt).IsRequired();
                 entity.HasIndex(n => n.MotorcycleId);
+            });
+            modelBuilder.Entity<DeliveryPerson>(entity =>
+            {
+                entity.HasKey(d => d.Id);
+                entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
+                entity.Property(d => d.BirthDate).IsRequired().HasMaxLength(10);
+                entity.HasIndex(d => d.Cnh).IsUnique();
+                entity.Property(d => d.Cnh).IsRequired().HasMaxLength(11);
+                entity.Property(d => d.CnhType).IsRequired().HasMaxLength(3);
+                entity.Property(d => d.CnhImage).IsRequired();
+                entity.HasIndex(d => d.Cnpj).IsUnique();
+                entity.Property(d => d.Cnpj).IsRequired().HasMaxLength(14);
             });
             // Seed initial data for Moto entity
             modelBuilder.Entity<Moto>().HasData(

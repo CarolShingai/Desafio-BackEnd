@@ -6,10 +6,10 @@ namespace RentalApi.Domain.Interfaces
     {
         Task<DeliveryPerson> AddDeliveryPersonAsync(DeliveryPerson deliveryPerson);
         // Task<DeliveryPerson?> GetDeliveryPersonByIdAsync(Guid id);
-        Task<bool> GetDeliveryPersonByCnpjAsync(string cnpj);
-        Task<bool> GetDeliveryPersonByCnhAsync(string cnh);
-        Task<bool> ExistsCnpjAsync(string cnpj);
-        Task<bool> ExistsCnhAsync(string cnh);
-        Task<bool> IsValidCnhTypeAsync(string cnhType);
+        Task<DeliveryPerson?> GetDeliveryPersonByCnpjAsync(string cnpj);
+        Task<DeliveryPerson?> GetDeliveryPersonByCnhAsync(string cnh);
+        Task<bool> ValidateCnpjAsync(string cnpj);
+        Task<bool> ValidateCnhAsync(string cnh);
+        bool IsValidCnhType(string cnhType);
     }
 }
