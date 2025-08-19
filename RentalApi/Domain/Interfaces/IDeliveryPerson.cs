@@ -2,7 +2,7 @@ using RentalApi.Domain.Entities;
 
 namespace RentalApi.Domain.Interfaces
 {
-    public interface IDeliveryPerson
+    public interface IDeliveryPersonRepository
     {
         Task<DeliveryPerson> AddDeliveryPersonAsync(DeliveryPerson deliveryPerson);
         Task<bool> AddCnhImageAsync(string deliveryPersonId, string image);
