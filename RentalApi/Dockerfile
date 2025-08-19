@@ -12,5 +12,9 @@ COPY . .
 # Variável de ambiente para modo Development
 ENV ASPNETCORE_ENVIRONMENT=Development
 
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Permite hot reload e mapeia volume do código
 CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
+ 

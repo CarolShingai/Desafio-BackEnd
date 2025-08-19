@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RentalApi.Application.Services;
 using RentalApi.Application.DTOs;
-using RentalApi.Domain.Entities;
 
 namespace RentalApi.Controllers
 {
@@ -18,31 +17,22 @@ namespace RentalApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterDeliveryPerson([FromBody] DeliveryPerson deliveryPers)
+        public async Task<IActionResult> RegisterDeliveryPerson([FromBody] CreateDeliveryPersonRequest dto)
         {
-            if (deliveryPers == null)
+            if (dto == null)
                 return BadRequest("Invalid delivery person data.");
 
-            var delivery = new DeliveryPerson
-            {
-                Name = deliveryPers.Name,
-                Cnpj = deliveryPers.Cnpj,
-                BirthDate = deliveryPers.BirthDate,
-                Cnh = deliveryPers.Cnh,
-                CnhType = deliveryPers.CnhType,
-                CnhImage = deliveryPers.CnhImage
-            };
-
-            var result = await _deliveryPersonService.RegisterDeliveryPersonAsync(delivery);
+            var result = await _deliveryPersonService.RegisterDeliveryPersonAsync(dto);
             return CreatedAtRoute(null, result);
         }
+
         [HttpPost("{id}/cnh")]
-        public async Task<IActionResult> UpdateCnhImage(Guid id, [FromBody] string base64Image)
+        public async Task<IActionResult> UpdateCnhImage(string id, [FromBody] UpdateImageRequest request)
         {
-            if (string.IsNullOrWhiteSpace(base64Image))
+            if (request == null || string.IsNullOrWhiteSpace(request.UpdateCnhImageImage))
                 return BadRequest("Invalid image data.");
 
-            var result = await _deliveryPersonService.UpdateCnhImageAsync(id, base64Image);
+            var result = await _deliveryPersonService.UpdateCnhImageAsync(id, request.UpdateCnhImageImage);
             if (!result)
                 return NotFound();
 

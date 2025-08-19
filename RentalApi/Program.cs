@@ -35,10 +35,11 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// Aplicar migrações automaticamente na inicialização
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<RentalDbContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 // Activate Swagger over development

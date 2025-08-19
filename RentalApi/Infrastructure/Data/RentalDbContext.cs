@@ -47,8 +47,10 @@ namespace RentalApi.Infrastructure.Data
             modelBuilder.Entity<DeliveryPerson>(entity =>
             {
                 entity.HasKey(d => d.Id);
+                entity.HasIndex(d => d.Identifier).IsUnique();
+                entity.Property(d => d.Identifier).IsRequired().HasMaxLength(50);
                 entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
-                entity.Property(d => d.BirthDate).IsRequired().HasMaxLength(10);
+                entity.Property(d => d.BirthDate).IsRequired().HasMaxLength(20);
                 entity.HasIndex(d => d.Cnh).IsUnique();
                 entity.Property(d => d.Cnh).IsRequired().HasMaxLength(11);
                 entity.Property(d => d.CnhType).IsRequired().HasMaxLength(3);
