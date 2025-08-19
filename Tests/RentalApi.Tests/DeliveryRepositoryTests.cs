@@ -20,6 +20,7 @@ namespace RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task AddDeliveryPersonAsync_ShouldAdd_WhenValid()
         {
             var repo = GetRepository();
@@ -39,6 +40,7 @@ namespace RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task AddDeliveryPersonAsync_ShouldThrow_WhenCnpjExists()
         {
             var repo = GetRepository();
@@ -67,6 +69,7 @@ namespace RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task AddDeliveryPersonAsync_ShouldThrow_WhenCnhExists()
         {
             var repo = GetRepository();
@@ -95,6 +98,7 @@ namespace RentalApi.Tests
         }
 
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData("A")]
         [InlineData("B")]
         [InlineData("A + B")]
@@ -105,6 +109,7 @@ namespace RentalApi.Tests
         }
 
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData("")]
         [InlineData("C")]
         [InlineData("AB")]
@@ -116,6 +121,7 @@ namespace RentalApi.Tests
         }
 
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData("12345678901234", true)]
         [InlineData("1234567890123", false)]
         [InlineData("123456789012345", false)]
@@ -128,6 +134,7 @@ namespace RentalApi.Tests
         }
 
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData("12345678901", true)]
         [InlineData("1234567890", false)]
         [InlineData("123456789012", false)]

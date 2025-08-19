@@ -9,6 +9,7 @@ namespace Tests.RentalApi.Tests
     public class MotoServiceTests
     {
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAllMoto_ShouldReturnAllMotos()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -29,6 +30,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetAllMoto_EmptyList_ShouldReturnEmptyList()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -43,6 +45,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetMotoByIdentifierAsync_MotoExists_ShouldReturnMoto()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -59,6 +62,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task GetMotoByIdentifierAsync_MotoDoesNotExist_ShouldReturnNull()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -71,9 +75,10 @@ namespace Tests.RentalApi.Tests
             Assert.Null(result);
         }
 
-    // Removed duplicated and invalid code blocks
+        // Removed duplicated and invalid code blocks
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task RegisterNewMotoAsync_DuplicateLicense_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -88,6 +93,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task ChangeMotoLicenseAsync_MotoExists_UniqueLicense_ShouldUpdateSuccessfully()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -105,6 +111,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task ChangeMotoLicenseAsync_MotoDoesNotExist_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -117,6 +124,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task ChangeMotoLicenseAsync_LicenseAlreadyExists_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -132,6 +140,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task ChangeMotoLicenseAsync_SameMoto_SameLicense_ShouldAllow()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -148,6 +157,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task DeleteRegisteredMotoAsync_MotoExists_ShouldRemoveSuccessfully()
         {
             var mockRepository = new Mock<IMotoRepository>();
@@ -166,6 +176,7 @@ namespace Tests.RentalApi.Tests
         }
 
         [Fact]
+        [Trait("Category", "Unit")]
         public async Task DeleteRegisteredMotoAsync_MotoDoesNotExist_ShouldThrowException()
         {
             var mockRepository = new Mock<IMotoRepository>();
