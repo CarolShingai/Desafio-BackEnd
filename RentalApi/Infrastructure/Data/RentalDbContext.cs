@@ -62,6 +62,19 @@ namespace RentalApi.Infrastructure.Data
             modelBuilder.Entity<Moto>().HasData(
                 new Moto { Id = 1, Identificador = "moto123", Ano = 2020, Modelo = "Mottu Sport", Placa = "CDX-0101", IsRented = true }
             );
+            modelBuilder.Entity<DeliveryPerson>().HasData(
+                new DeliveryPerson
+                {
+                    Id = Guid.NewGuid(),
+                    Identifier = "entregador123",
+                    Name = "João Silva",
+                    Cnpj = "12345678901234",
+                    BirthDate = "1990-01-01",
+                    Cnh = "12345678901",
+                    CnhType = "A",
+                    CnhImage = "base64string"
+                }
+            );
         }
     }
 }
