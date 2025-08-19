@@ -34,5 +34,6 @@ namespace RentalApi.Domain.Entities
 
         public DateTime NotifiedAt { get; set; }
         public string Message { get; set; } = string.Empty;
+        public virtual ICollection<RentMoto> Rentals { get; set; } = new List<RentMoto>();
     }
 }
