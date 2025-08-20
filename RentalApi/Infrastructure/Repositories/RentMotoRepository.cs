@@ -21,7 +21,7 @@ namespace RentalApi.Infrastructure.Repositories
             return rentMoto;
         }
 
-        public async Task<RentMoto?> GetRentalByIdAsync(string id)
+        public async Task<RentMoto?> FindRentalByIdAsync(string id)
         {
             return await _context.RentMotos
             .Include(r => r.Moto)

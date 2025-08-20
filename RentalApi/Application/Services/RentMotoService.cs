@@ -45,9 +45,25 @@ namespace RentalApi.Application.Services
 			return rental;
 		}
 
+		public async Task<RentMoto?> GetRentalByIdAsync(string rentId)
+		{
+			return await _rentMotoRepository.FindRentalByIdAsync(rentId);
+		}
+
+		public async Task<decimal> GetFinalRentalValueAsync(string rentId)
+		{
+			var rental = await _rentMotoRepository.FindRentalByIdAsync(rentId);
+			if (rental == null)
+				throw new ArgumentException("Locação não encontrada");
+
+			if (!rental.ActualReturnDate.HasValue)
+				throw new InvalidOperationException("Data de devolução ainda não foi informada");
+
+			return rental.TotalCost;
+		}
 		public async Task<RentMoto> InformReturnDateAsync(string rentId, DateTime actualReturnDate)
 		{
-			var rental = await _rentMotoRepository.GetRentalByIdAsync(rentId);
+			var rental = await _rentMotoRepository.FindRentalByIdAsync(rentId);
 			if (rental == null)
 				throw new ArgumentException("Locação não encontrada");
 
@@ -60,21 +76,9 @@ namespace RentalApi.Application.Services
 			return rental;
 		}
 
-		public async Task<decimal> GetFinalRentalValueAsync(string rentId)
-		{
-			var rental = await _rentMotoRepository.GetRentalByIdAsync(rentId);
-			if (rental == null)
-				throw new ArgumentException("Locação não encontrada");
-
-			if (!rental.ActualReturnDate.HasValue)
-				throw new InvalidOperationException("Data de devolução ainda não foi informada");
-
-			return rental.TotalCost;
-		}
-
 		public async Task<decimal> SimulateReturnValueAsync(string rentId, DateTime returnDate)
 		{
-			var rental = await _rentMotoRepository.GetRentalByIdAsync(rentId);
+			var rental = await _rentMotoRepository.FindRentalByIdAsync(rentId);
 			if (rental == null)
 				throw new ArgumentException("Locação não encontrada");
 

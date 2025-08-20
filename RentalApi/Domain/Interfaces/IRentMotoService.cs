@@ -6,6 +6,7 @@ namespace RentalApi.Domain.Interfaces
     {
         Task<RentMoto> CreateRentalAsync(string deliveryPersonId, string motoId, int planDays);
         Task<RentMoto> InformReturnDateAsync(string rentId, DateTime actualReturnDate);
+        Task<RentMoto?> GetRentalByIdAsync(string rentId);
         Task<decimal> GetFinalRentalValueAsync(string rentId);
         Task<decimal> SimulateReturnValueAsync(string rentId, DateTime ReturnDate);
     }
