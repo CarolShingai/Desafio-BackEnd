@@ -36,7 +36,7 @@ namespace Tests.RentalApi.Tests
                 Identifier = Guid.NewGuid().ToString(),
                 Name = "João Silva",
                 Cnpj = "12345678901234",
-                BirthDate = "1990-01-01",
+                BirthDate = DateTime.Parse("1990-01-01"),
                 Cnh = "123456789",
                 CnhType = "A",
                 CnhImage = "path/to/image"
@@ -90,19 +90,19 @@ namespace Tests.RentalApi.Tests
             var deliveryPerson = new DeliveryPerson
             {
                 Id = Guid.NewGuid(),
-                Identificador = Guid.NewGuid().ToString(),
-                Nome = "Maria Santos",
+                Identifier = Guid.NewGuid().ToString(),
+                Name = "Maria Santos",
                 Cnpj = "98765432109876",
-                DataNascimento = DateTime.Now.AddYears(-25),
-                NumeroCnh = "987654321",
+                BirthDate = DateTime.Now.AddYears(-25),
+                Cnh = "987654321",
                 CnhType = "A+B",
-                ImagemCnh = "path/to/image2"
+                CnhImage = "path/to/image2"
             };
             await deliveryRepo.AddDeliveryPersonAsync(deliveryPerson);
 
             // 2. Criar locação de 15 dias
             var rental = await rentService.CreateRentalAsync(
-                deliveryPerson.Identificador, 
+                deliveryPerson.Identifier, 
                 "456", 
                 15
             );
@@ -143,19 +143,19 @@ namespace Tests.RentalApi.Tests
             var deliveryPerson = new DeliveryPerson
             {
                 Id = Guid.NewGuid(),
-                Identificador = Guid.NewGuid().ToString(),
-                Nome = "Carlos Pereira",
+                Identifier = Guid.NewGuid().ToString(),
+                Name = "Carlos Pereira",
                 Cnpj = "11111111111111",
-                DataNascimento = DateTime.Now.AddYears(-35),
-                NumeroCnh = "111111111",
+                BirthDate = DateTime.Now.AddYears(-35),
+                Cnh = "111111111",
                 CnhType = "A",
-                ImagemCnh = "path/to/image3"
+                CnhImage = "path/to/image3"
             };
             await deliveryRepo.AddDeliveryPersonAsync(deliveryPerson);
 
             // 2. Criar locação de 30 dias
             var rental = await rentService.CreateRentalAsync(
-                deliveryPerson.Identificador, 
+                deliveryPerson.Identifier, 
                 "789", 
                 30
             );
@@ -194,19 +194,19 @@ namespace Tests.RentalApi.Tests
             var deliveryPerson = new DeliveryPerson
             {
                 Id = Guid.NewGuid(),
-                Identificador = Guid.NewGuid().ToString(),
-                Nome = "Ana Costa",
+                Identifier = Guid.NewGuid().ToString(),
+                Name = "Ana Costa",
                 Cnpj = "22222222222222",
-                DataNascimento = DateTime.Now.AddYears(-28),
-                NumeroCnh = "222222222",
+                BirthDate = DateTime.Now.AddYears(-28),
+                Cnh = "222222222",
                 CnhType = "A",
-                ImagemCnh = "path/to/image4"
+                CnhImage = "path/to/image4"
             };
             await deliveryRepo.AddDeliveryPersonAsync(deliveryPerson);
 
             // 2. Criar locação de 50 dias
             var rental = await rentService.CreateRentalAsync(
-                deliveryPerson.Identificador, 
+                deliveryPerson.Identifier, 
                 "999", 
                 50
             );
@@ -245,19 +245,19 @@ namespace Tests.RentalApi.Tests
             var deliveryPerson = new DeliveryPerson
             {
                 Id = Guid.NewGuid(),
-                Identificador = Guid.NewGuid().ToString(),
-                Nome = "Pedro Oliveira",
+                Identifier = Guid.NewGuid().ToString(),
+                Name = "Pedro Oliveira",
                 Cnpj = "33333333333333",
-                DataNascimento = DateTime.Now.AddYears(-40),
-                NumeroCnh = "333333333",
+                BirthDate = DateTime.Now.AddYears(-40),
+                Cnh = "333333333",
                 CnhType = "B", // CNH inválida para motos
-                ImagemCnh = "path/to/image5"
+                CnhImage = "path/to/image5"
             };
             await deliveryRepo.AddDeliveryPersonAsync(deliveryPerson);
 
             // 2. Tentar criar locação (deve falhar)
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => rentService.CreateRentalAsync(deliveryPerson.Identificador, "123", 7)
+                () => rentService.CreateRentalAsync(deliveryPerson.Identifier, "123", 7)
             );
 
             Assert.Equal("Somente entregadores habilitados na categoria A podem efetuar uma locação", exception.Message);

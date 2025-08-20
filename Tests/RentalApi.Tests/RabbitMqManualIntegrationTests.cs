@@ -63,10 +63,10 @@ namespace RentalApi.Tests
             
             var moto2024 = new Moto
             {
-                Identificador = Guid.NewGuid().ToString(),
-                Ano = 2024,
-                Modelo = "Honda CB 600F",
-                Placa = "ABC1234"
+                Identifier = Guid.NewGuid().ToString(),
+                Year = 2024,
+                MotorcycleModel = "Honda CB 600F",
+                LicensePlate = "ABC1234"
             };
 
             var processedCount = 0;
@@ -77,15 +77,15 @@ namespace RentalApi.Tests
                 async moto =>
                 {
                     processedCount++;
-                    if (moto.Ano == 2024)
+                    if (moto.Year == 2024)
                     {
                         // Usar o mesmo scope para garantir que estamos usando o mesmo contexto de banco
                         var notification = new MotoNotification(
                             moto.Id,
-                            moto.Identificador,
-                            moto.Ano,
-                            moto.Modelo,
-                            moto.Placa
+                            moto.Identifier,
+                            moto.Year,
+                            moto.MotorcycleModel,
+                            moto.LicensePlate
                         );
                         await notificationRepo.AddNotificationAsync(notification);
                         processedMoto.SetResult(moto);
@@ -111,8 +111,8 @@ namespace RentalApi.Tests
             Assert.NotNull(notification);
             Assert.Equal(moto2024.Id, notification.MotorcycleId);
             Assert.Equal(2024, notification.Year);
-            Assert.Equal(moto2024.Modelo, notification.Model);
-            Assert.Equal(moto2024.Placa, notification.LicensePlate);
+            Assert.Equal(moto2024.MotorcycleModel, notification.Model);
+            Assert.Equal(moto2024.LicensePlate, notification.LicensePlate);
         }
 
         [Fact]
@@ -125,10 +125,10 @@ namespace RentalApi.Tests
             
             var moto2023 = new Moto
             {
-                Identificador = Guid.NewGuid().ToString(),
-                Ano = 2023,
-                Modelo = "Yamaha MT-07",
-                Placa = "XYZ5678"
+                Identifier = Guid.NewGuid().ToString(),
+                Year = 2023,
+                MotorcycleModel = "Yamaha MT-07",
+                LicensePlate = "XYZ5678"
             };
 
             var processedCount = 0;
@@ -139,15 +139,15 @@ namespace RentalApi.Tests
                 async moto =>
                 {
                     processedCount++;
-                    if (moto.Ano == 2024)
+                    if (moto.Year == 2024)
                     {
                         // Usar o mesmo scope
                         var notification = new MotoNotification(
                             moto.Id,
-                            moto.Identificador,
-                            moto.Ano,
-                            moto.Modelo,
-                            moto.Placa
+                            moto.Identifier,
+                            moto.Year,
+                            moto.MotorcycleModel,
+                            moto.LicensePlate
                         );
                         await notificationRepo.AddNotificationAsync(notification);
                     }

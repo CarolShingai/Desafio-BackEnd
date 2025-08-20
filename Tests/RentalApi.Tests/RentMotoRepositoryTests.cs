@@ -34,7 +34,7 @@ namespace RentalApi.Tests
 
 		[Fact]
 		[Trait("Category", "Unit")]
-		public async Task GetRentalByIdAsync_ShouldReturnRental_WhenExists()
+		public async Task FindRentalByIdAsync_ShouldReturnRental_WhenExists()
 		{
 			using var context = GetInMemoryDbContext();
 			var rentMoto = new RentMoto { RentId = "test-id" };
@@ -42,7 +42,7 @@ namespace RentalApi.Tests
 			await context.SaveChangesAsync();
 			var repo = new RentMotoRepository(context);
 
-			var result = await repo.GetRentalByIdAsync("test-id");
+			var result = await repo.FindRentalByIdAsync("test-id");
 
 			Assert.NotNull(result);
 			Assert.Equal("test-id", result.RentId);
@@ -50,12 +50,12 @@ namespace RentalApi.Tests
 
 		[Fact]
 		[Trait("Category", "Unit")]
-		public async Task GetRentalByIdAsync_ShouldReturnNull_WhenNotExists()
+		public async Task FindRentalByIdAsync_ShouldReturnNull_WhenNotExists()
 		{
 			using var context = GetInMemoryDbContext();
 			var repo = new RentMotoRepository(context);
 
-			var result = await repo.GetRentalByIdAsync("not-exist");
+			var result = await repo.FindRentalByIdAsync("not-exist");
 
 			Assert.Null(result);
 		}

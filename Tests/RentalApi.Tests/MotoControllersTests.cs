@@ -41,10 +41,10 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
 	{
 		var request = new CreateMotoRequest
 		{
-			Identificador = "test-post",
-			Ano = 2025,
-			Modelo = "Test Model Post",
-			Placa = "AAA-1111"
+			Identifier = "test-post",
+			Year = 2025,
+			MotorcycleModel = "Test Model Post",
+			LicensePlate = "AAA-1111"
 		};
 
 		var response = await _client.PostAsJsonAsync("/api/MotoControllers", request);
@@ -57,10 +57,10 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
         // Cria uma moto única para este teste
         var createRequest = new CreateMotoRequest
         {
-            Identificador = "all-motos-test",
-            Ano = 2022,
-            Modelo = "Test All Model",
-            Placa = "AAA-0002"
+            Identifier = "all-motos-test",
+            Year = 2022,
+            MotorcycleModel = "Test All Model",
+            LicensePlate = "AAA-0002"
         };
         await _client.PostAsJsonAsync("/api/MotoControllers", createRequest);
 
@@ -70,7 +70,7 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
 
         var motos = await response.Content.ReadFromJsonAsync<List<MotoResponse>>();
         Assert.NotNull(motos);
-        Assert.Contains(motos, m => m.Identificador == "all-motos-test");
+        Assert.Contains(motos, m => m.Identifier == "all-motos-test");
     }
 
 	[Fact]
@@ -78,10 +78,10 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
 	{
         var createRequest = new CreateMotoRequest
         {
-            Identificador = "id-test",
-            Ano = 2023,
-            Modelo = "Test Id Model",
-            Placa = "ZZZ-0002"
+            Identifier = "id-test",
+            Year = 2023,
+            MotorcycleModel = "Test Id Model",
+            LicensePlate = "ZZZ-0002"
         };
 
         await _client.PostAsJsonAsync("/api/MotoControllers", createRequest);
@@ -102,14 +102,14 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
         // Cria uma moto única para o teste
         var createRequest = new CreateMotoRequest
         {
-            Identificador = "update-test",
-            Ano = 2025,
-            Modelo = "Test Model",
-            Placa = "UPD-0001"
+            Identifier = "update-test",
+            Year = 2025,
+            MotorcycleModel = "Test Model",
+            LicensePlate = "UPD-0001"
         };
         await _client.PostAsJsonAsync("/api/MotoControllers", createRequest);
 
-        var updateRequest = new UpdateMotoPlacaRequest { Placa = "NEW-1234" };
+        var updateRequest = new UpdateMotoPlacaRequest { LicensePlate = "NEW-1234" };
         var response = await _client.PutAsJsonAsync("/api/MotoControllers/update-test/placa", updateRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -119,14 +119,14 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
 	{
         var createRequest = new CreateMotoRequest
         {
-            Identificador = "invalid-update-test",
-            Ano = 2020,
-            Modelo = "Test Model",
-            Placa = "XXX-0001"
+            Identifier = "invalid-update-test",
+            Year = 2020,
+            MotorcycleModel = "Test Model",
+            LicensePlate = "XXX-0001"
         };
         await _client.PostAsJsonAsync("/api/MotoControllers", createRequest);
 
-		var updateRequest = new UpdateMotoPlacaRequest { Placa = "" };
+		var updateRequest = new UpdateMotoPlacaRequest { LicensePlate = "" };
 		var response = await _client.PutAsJsonAsync("/api/MotoControllers/not-exist/placa", updateRequest);
 		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 	}
@@ -136,10 +136,10 @@ public class MotoControllersTests : IClassFixture<CustomWebApplicationFactory>
     {
         var createRequest = new CreateMotoRequest
         {
-            Identificador = "delete-test",
-            Ano = 2025,
-            Modelo = "Delete Model",
-            Placa = "DEL-0001"
+            Identifier = "delete-test",
+            Year = 2025,
+            MotorcycleModel = "Delete Model",
+            LicensePlate = "DEL-0001"
         };
         await _client.PostAsJsonAsync("/api/MotoControllers", createRequest);
 

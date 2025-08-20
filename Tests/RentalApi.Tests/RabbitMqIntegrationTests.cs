@@ -100,10 +100,10 @@ namespace RentalApi.Tests
             
             var moto2024 = new Moto
             {
-                Identificador = Guid.NewGuid().ToString(),
-                Ano = 2024,
-                Modelo = "Honda CB 600F",
-                Placa = "ABC1234"
+                Identifier = Guid.NewGuid().ToString(),
+                Year = 2024,
+                MotorcycleModel = "Honda CB 600F",
+                LicensePlate = "ABC1234"
             };
 
             // Act - Publicar mensagem no RabbitMQ
@@ -132,10 +132,10 @@ namespace RentalApi.Tests
             
             var moto2023 = new Moto
             {
-                Identificador = Guid.NewGuid().ToString(),
-                Ano = 2023,
-                Modelo = "Yamaha MT-07",
-                Placa = "XYZ5678"
+                Identifier = Guid.NewGuid().ToString(),
+                Year = 2023,
+                MotorcycleModel = "Yamaha MT-07",
+                LicensePlate = "XYZ5678"
             };
 
             // Contar notificações antes
@@ -165,9 +165,9 @@ namespace RentalApi.Tests
             
             var motos2024 = new[]
             {
-                new Moto { Identificador = Guid.NewGuid().ToString(), Ano = 2024, Modelo = "Honda CB 600F", Placa = "ABC1111" },
-                new Moto { Identificador = Guid.NewGuid().ToString(), Ano = 2024, Modelo = "Yamaha MT-07", Placa = "DEF2222" },
-                new Moto { Identificador = Guid.NewGuid().ToString(), Ano = 2023, Modelo = "Kawasaki Ninja", Placa = "GHI3333" } // Esta não deve gerar notificação
+                new Moto { Identifier = Guid.NewGuid().ToString(), Year = 2024, MotorcycleModel = "Honda CB 600F", LicensePlate = "ABC1111" },
+                new Moto { Identifier = Guid.NewGuid().ToString(), Year = 2024, MotorcycleModel = "Yamaha MT-07", LicensePlate = "DEF2222" },
+                new Moto { Identifier = Guid.NewGuid().ToString(), Year = 2023, MotorcycleModel = "Kawasaki Ninja", LicensePlate = "GHI3333" } // Esta não deve gerar notificação
             };
 
             // Act - Publicar múltiplas mensagens
@@ -189,7 +189,7 @@ namespace RentalApi.Tests
             foreach (var notification in relevantNotifications)
             {
                 var correspondingMoto = motos2024.First(m => m.Id == notification.MotorcycleId);
-                Assert.Equal(2024, correspondingMoto.Ano);
+                Assert.Equal(2024, correspondingMoto.Year);
             }
         }
 

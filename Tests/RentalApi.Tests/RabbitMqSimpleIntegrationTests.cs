@@ -76,10 +76,10 @@ namespace RentalApi.Tests
             
             var moto2024 = new Moto
             {
-                Identificador = Guid.NewGuid().ToString(),
-                Ano = 2024,
-                Modelo = "Honda CB 600F",
-                Placa = "ABC1234"
+                Identifier = Guid.NewGuid().ToString(),
+                Year = 2024,
+                MotorcycleModel = "Honda CB 600F",
+                LicensePlate = "ABC1234"
             };
 
             // Act & Assert - Verificar se a publicação não gera exceção

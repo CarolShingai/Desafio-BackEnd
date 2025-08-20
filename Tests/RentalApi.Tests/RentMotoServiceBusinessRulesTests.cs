@@ -12,13 +12,15 @@ namespace Tests.RentalApi.Tests
     {
         private readonly Mock<IRentMotoRepository> _mockRentRepo;
         private readonly Mock<IDeliveryPersonRepository> _mockDeliveryRepo;
+        private readonly Mock<IMotoRepository> _mockMotoRepo;
         private readonly RentMotoService _service;
 
         public RentMotoServiceBusinessRulesTests()
         {
             _mockRentRepo = new Mock<IRentMotoRepository>();
             _mockDeliveryRepo = new Mock<IDeliveryPersonRepository>();
-            _service = new RentMotoService(_mockRentRepo.Object, _mockDeliveryRepo.Object);
+            _mockMotoRepo = new Mock<IMotoRepository>();
+            _service = new RentMotoService(_mockRentRepo.Object, _mockDeliveryRepo.Object, _mockMotoRepo.Object);
         }
 
         #region CreateRentalAsync Tests
@@ -32,9 +34,19 @@ namespace Tests.RentalApi.Tests
             var motoId = "123";
             var planDays = 7;
             var deliveryPerson = new DeliveryPerson { Id = Guid.Parse(deliveryPersonId), CnhType = "A" };
+            var moto = new Moto 
+            { 
+                Id = 123,
+                Identifier = motoId,
+                Year = 2024,
+                MotorcycleModel = "Test Model",
+                LicensePlate = "ABC-1234"
+            };
             
             _mockDeliveryRepo.Setup(r => r.FindDeliveryPersonByIdentifierAsync(deliveryPersonId))
                 .ReturnsAsync(deliveryPerson);
+            _mockMotoRepo.Setup(r => r.FindByMotoIdentifierAsync(motoId))
+                .ReturnsAsync(moto);
             _mockRentRepo.Setup(r => r.AddRentalAsync(It.IsAny<RentMoto>()))
                 .ReturnsAsync((RentMoto r) => r);
 
@@ -61,9 +73,19 @@ namespace Tests.RentalApi.Tests
             var motoId = "123";
             var planDays = 15;
             var deliveryPerson = new DeliveryPerson { Id = Guid.Parse(deliveryPersonId), CnhType = "A+B" };
+            var moto = new Moto 
+            { 
+                Id = 123,
+                Identifier = motoId,
+                Year = 2024,
+                MotorcycleModel = "Test Model",
+                LicensePlate = "ABC-1234"
+            };
             
             _mockDeliveryRepo.Setup(r => r.FindDeliveryPersonByIdentifierAsync(deliveryPersonId))
                 .ReturnsAsync(deliveryPerson);
+            _mockMotoRepo.Setup(r => r.FindByMotoIdentifierAsync(motoId))
+                .ReturnsAsync(moto);
             _mockRentRepo.Setup(r => r.AddRentalAsync(It.IsAny<RentMoto>()))
                 .ReturnsAsync((RentMoto r) => r);
 
@@ -91,7 +113,7 @@ namespace Tests.RentalApi.Tests
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _service.CreateRentalAsync(deliveryPersonId, motoId, planDays)
             );
-            Assert.Equal("Entregador não encontrado", exception.Message);
+            Assert.Equal("Delivery person not found.", exception.Message);
         }
 
         [Fact]
@@ -111,7 +133,7 @@ namespace Tests.RentalApi.Tests
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _service.CreateRentalAsync(deliveryPersonId, motoId, planDays)
             );
-            Assert.Equal("Somente entregadores habilitados na categoria A podem efetuar uma locação", exception.Message);
+            Assert.Equal("Only drivers with category A license can rent a motorcycle.", exception.Message);
         }
 
         [Theory]
@@ -127,9 +149,19 @@ namespace Tests.RentalApi.Tests
             var deliveryPersonId = Guid.NewGuid().ToString();
             var motoId = "123";
             var deliveryPerson = new DeliveryPerson { Id = Guid.Parse(deliveryPersonId), CnhType = "A" };
+            var moto = new Moto 
+            { 
+                Id = 123,
+                Identifier = motoId,
+                Year = 2024,
+                MotorcycleModel = "Test Model",
+                LicensePlate = "ABC-1234"
+            };
             
             _mockDeliveryRepo.Setup(r => r.FindDeliveryPersonByIdentifierAsync(deliveryPersonId))
                 .ReturnsAsync(deliveryPerson);
+            _mockMotoRepo.Setup(r => r.FindByMotoIdentifierAsync(motoId))
+                .ReturnsAsync(moto);
             _mockRentRepo.Setup(r => r.AddRentalAsync(It.IsAny<RentMoto>()))
                 .ReturnsAsync((RentMoto r) => r);
 
@@ -165,7 +197,7 @@ namespace Tests.RentalApi.Tests
                 TotalCost = 210m
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.SimulateReturnValueAsync(rentId, returnDate);
@@ -198,7 +230,7 @@ namespace Tests.RentalApi.Tests
                 TotalCost = 420m
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.SimulateReturnValueAsync(rentId, returnDate);
@@ -231,7 +263,7 @@ namespace Tests.RentalApi.Tests
                 TotalCost = 660m
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.SimulateReturnValueAsync(rentId, returnDate);
@@ -261,7 +293,7 @@ namespace Tests.RentalApi.Tests
                 TotalCost = 210m
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.SimulateReturnValueAsync(rentId, returnDate);
@@ -293,7 +325,7 @@ namespace Tests.RentalApi.Tests
                 TotalCost = 210m
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.SimulateReturnValueAsync(rentId, returnDate);
@@ -325,7 +357,7 @@ namespace Tests.RentalApi.Tests
                 ActualReturnDate = null
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
             _mockRentRepo.Setup(r => r.UpdateRentAsync(It.IsAny<RentMoto>()))
                 .ReturnsAsync((RentMoto r) => r);
 
@@ -351,13 +383,13 @@ namespace Tests.RentalApi.Tests
                 ActualReturnDate = DateTime.UtcNow.Date.AddDays(6) // Já tem data de devolução
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _service.InformReturnDateAsync(rentId, returnDate)
             );
-            Assert.Equal("Data de devolução já foi informada para esta locação", exception.Message);
+            Assert.Equal("Return date has already been provided for this rental", exception.Message);
         }
 
         #endregion
@@ -377,7 +409,7 @@ namespace Tests.RentalApi.Tests
                 ActualReturnDate = DateTime.UtcNow.Date.AddDays(7)
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act
             var result = await _service.GetFinalRentalValueAsync(rentId);
@@ -399,13 +431,13 @@ namespace Tests.RentalApi.Tests
                 ActualReturnDate = null // Data de devolução não informada
             };
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync(rental);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync(rental);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _service.GetFinalRentalValueAsync(rentId)
             );
-            Assert.Equal("Data de devolução ainda não foi informada", exception.Message);
+            Assert.Equal("Return date has not been provided yet", exception.Message);
         }
 
         #endregion
@@ -429,7 +461,7 @@ namespace Tests.RentalApi.Tests
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _service.CreateRentalAsync(deliveryPersonId, motoId, planDays)
             );
-            Assert.Contains("Plano de locação inválido", exception.Message);
+            Assert.Contains("Invalid rental plan", exception.Message);
         }
 
         [Fact]
@@ -440,13 +472,13 @@ namespace Tests.RentalApi.Tests
             var rentId = "inexistent-rent";
             var returnDate = DateTime.UtcNow.Date.AddDays(7);
 
-            _mockRentRepo.Setup(r => r.GetRentalByIdAsync(rentId)).ReturnsAsync((RentMoto)null);
+            _mockRentRepo.Setup(r => r.FindRentalByIdAsync(rentId)).ReturnsAsync((RentMoto)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _service.SimulateReturnValueAsync(rentId, returnDate)
             );
-            Assert.Equal("Locação não encontrada", exception.Message);
+            Assert.Equal("Rental not found", exception.Message);
         }
 
         #endregion
