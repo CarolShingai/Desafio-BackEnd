@@ -5,6 +5,7 @@ namespace RentalApi.Domain.ValueObjects
 		public int Days { get; set; }
 		public decimal DailyRate { get; set; }
 		public decimal EarlyReturnPenalty { get; set; }
+		public decimal AfterReturnPenalty { get; set; } = 50;
 	};
 
 	private readonly List<RentalPlan> _rentalPlans = new()
