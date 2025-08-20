@@ -25,11 +25,26 @@ namespace RentalApi.Controllers
         }
 
         /// <summary>
-        /// Cria uma nova moto.
+        /// Cria uma nova moto no sistema.
         /// </summary>
         /// <param name="request">Dados da moto a ser criada.</param>
-        /// <returns>Dados da moto criada.</returns>
+        /// <returns>Dados da moto criada com sucesso.</returns>
+        /// <response code="201">Moto criada com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="409">Moto com a mesma placa já existe</response>
+        /// <example>
+        /// POST /moto
+        /// {
+        ///   "identifier": "MOTO001",
+        ///   "year": 2024,
+        ///   "motorcycleModel": "Honda CG 160",
+        ///   "licensePlate": "ABC-1234"
+        /// }
+        /// </example>
         [HttpPost]
+        [ProducesResponseType(typeof(MotoResponse), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(409)]
         public async Task<IActionResult> CreateMoto([FromBody] CreateMotoRequest request)
         {
             var moto = new Moto
@@ -51,10 +66,14 @@ namespace RentalApi.Controllers
         }
 
         /// <summary>
-        /// Retorna todas as motos cadastradas.
+        /// Retorna todas as motos cadastradas no sistema.
         /// </summary>
-        /// <returns>Lista de motos.</returns>
+        /// <returns>Lista completa de motos cadastradas.</returns>
+        /// <response code="200">Lista de motos retornada com sucesso</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
+        [ProducesResponseType(typeof(List<MotoResponse>), 200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllMotos()
         {
             var motos = await _motoService.GetAllMoto();

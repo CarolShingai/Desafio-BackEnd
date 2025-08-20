@@ -5,6 +5,7 @@ namespace RentalApi.Infrastructure.Repositories
 {
     /// <summary>
     /// In-memory repository implementation for motorcycle data access operations (for testing or legacy use).
+    /// Provides CRUD operations for motorcycles using an in-memory collection.
     /// </summary>
     public class MotoRepository : IMotoRepository
     {
@@ -12,7 +13,7 @@ namespace RentalApi.Infrastructure.Repositories
         private int _nextId = 1;
 
         /// <summary>
-        /// Initializes the repository with a default motorcycle.
+        /// Initializes a new instance of the <see cref="MotoRepository"/> class with sample data.
         /// </summary>
         public MotoRepository()
         {
@@ -26,60 +27,76 @@ namespace RentalApi.Infrastructure.Repositories
                 IsRented = false
             });
         }
+
         /// <summary>
-        /// Returns all motorcycles in the repository.
+        /// Retrieves all motorcycles from the in-memory collection asynchronously.
         /// </summary>
+        /// <returns>A task representing the asynchronous operation with a list of all motorcycles.</returns>
         public async Task<List<Moto>> FindMotoAllAsync()
         {
             return await Task.FromResult(_motos);
         }
+
         /// <summary>
-        /// Finds a motorcycle by its unique identifier.
+        /// Finds a motorcycle by its unique identifier asynchronously.
         /// </summary>
         /// <param name="identifier">Unique identifier of the motorcycle.</param>
-        /// <returns>The Moto entity if found, otherwise null.</returns>
+        /// <returns>
+        /// A task representing the asynchronous operation with the motorcycle entity if found,
+        /// or null if no motorcycle with the specified identifier exists.
+        /// </returns>
         public async Task<Moto?> FindByMotoIdentifierAsync(string identifier)
         {
             var moto = _motos.FirstOrDefault(m => m.Identifier == identifier);
             return await Task.FromResult(moto);
         }
+
         /// <summary>
-        /// Finds a motorcycle by its license plate.
+        /// Finds a motorcycle by its license plate asynchronously.
         /// </summary>
-        /// <param name="license">License plate of the motorcycle.</param>
-        /// <returns>The Moto entity if found, otherwise null.</returns>
+        /// <param name="license">License plate of the motorcycle to find.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation with the motorcycle entity if found,
+        /// or null if no motorcycle with the specified license plate exists.
+        /// </returns>
         public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
             var moto = _motos.FirstOrDefault(m => m.LicensePlate == license);
             return await Task.FromResult(moto);
         }
+
         /// <summary>
-        /// Searches motorcycles by partial license plate.
+        /// Searches for motorcycles by partial license plate match asynchronously.
         /// </summary>
-        /// <param name="license">Partial or full license plate to search for.</param>
-        /// <returns>List of Moto entities matching the search.</returns>
+        /// <param name="license">Partial or complete license plate to search for.</param>
+        /// <returns>A task representing the asynchronous operation with a list of matching motorcycles.</returns>
         public async Task<List<Moto>> SearchMotosByLicenseAsync(string license)
         {
             var result = _motos.Where(m => m.LicensePlate.Contains(license)).ToList();
             return await Task.FromResult(result);
         }
+
         /// <summary>
-        /// Adds a new motorcycle to the repository.
+        /// Adds a new motorcycle to the in-memory collection asynchronously.
         /// </summary>
-        /// <param name="moto">Moto entity to add.</param>
-        /// <returns>The added Moto entity.</returns>
+        /// <param name="moto">The motorcycle entity to add.</param>
+        /// <returns>A task representing the asynchronous operation with the added motorcycle entity.</returns>
         public async Task<Moto> AddMotoAsync(Moto moto)
         {
             moto.Id = _nextId++;
             _motos.Add(moto);
             return await Task.FromResult(moto);
         }
+
         /// <summary>
-        /// Updates the license plate of a motorcycle.
+        /// Updates the license plate of an existing motorcycle asynchronously.
         /// </summary>
-        /// <param name="identifier">Unique identifier of the motorcycle.</param>
-        /// <param name="license">New license plate.</param>
-        /// <returns>True if the update was successful, otherwise false.</returns>
+        /// <param name="identifier">Unique identifier of the motorcycle to update.</param>
+        /// <param name="license">New license plate value.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation with true if the update was successful,
+        /// false if the motorcycle was not found or the license plate already exists.
+        /// </returns>
         public async Task<bool> UpdateMotoLicenseAsync(string identifier, string license)
         {
             var moto = await FindByMotoIdentifierAsync(identifier);
@@ -93,10 +110,14 @@ namespace RentalApi.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Removes a motorcycle from the repository by its identifier.
+        /// Removes a motorcycle from the repository by its identifier asynchronously.
         /// </summary>
-        /// <param name="identifier">Unique identifier of the motorcycle.</param>
-        /// <returns>True if the removal was successful, otherwise false.</returns>
+        /// <param name="identifier">Unique identifier of the motorcycle to remove.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation with true if the removal was successful,
+        /// false if the motorcycle was not found.
+        /// </returns>
+        /// <exception cref="Exception">Thrown when attempting to delete a motorcycle that is currently rented.</exception>
         public async Task<bool> RemoveMotoAsync(string identifier)
         {
             var moto = await FindByMotoIdentifierAsync(identifier);

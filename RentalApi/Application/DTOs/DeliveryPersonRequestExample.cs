@@ -2,8 +2,15 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace RentalApi.Application.DTOs
 {
+    /// <summary>
+    /// Provides an example for the CreateDeliveryPersonRequest DTO used in Swagger documentation.
+    /// </summary>
     public class DeliveryPersonRequestExample : IExamplesProvider<CreateDeliveryPersonRequest>
     {
+        /// <summary>
+        /// Returns an example instance of CreateDeliveryPersonRequest for Swagger UI.
+        /// </summary>
+        /// <returns>Example CreateDeliveryPersonRequest object.</returns>
         public CreateDeliveryPersonRequest GetExamples()
         {
             return new CreateDeliveryPersonRequest

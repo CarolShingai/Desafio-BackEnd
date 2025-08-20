@@ -1,5 +1,6 @@
 using RentalApi.Domain.Entities;
 using RentalApi.Domain.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace RentalApi.Application.Services
 {
@@ -8,20 +9,20 @@ namespace RentalApi.Application.Services
     /// </summary>
     public class MotoService : IMotoService
     {
-        /// <summary>
-        /// Repository for Moto data access.
-        /// </summary>
         public readonly IMotoRepository _motoRepository;
             public IMessagePublisher _messagePublisher;
+            
         /// <summary>
         /// Initializes a new instance of the MotoService class.
         /// </summary>
         /// <param name="motoRepository">Repository for Moto operations.</param>
+        /// <param name="messagePublisher">Message publisher for publishing domain events.</param>
         public MotoService(IMotoRepository motoRepository, IMessagePublisher messagePublisher)
         {
             _motoRepository = motoRepository;
             _messagePublisher = messagePublisher;
         }
+        
         /// <summary>
         /// Gets all motorcycles from the repository.
         /// </summary>
@@ -49,6 +50,17 @@ namespace RentalApi.Application.Services
         /// <exception cref="Exception">Thrown if a motorcycle with the same license plate already exists.</exception>
         public async Task<Moto> RegisterNewMotoAsync(Moto moto)
         {
+            var currentYear = DateTime.UtcNow.Year;
+            if (moto.Year < 2000 || moto.Year > currentYear)
+                throw new Exception
+                    ("Invalid year. The motorcycle year must be between 2000 and the current year.");
+
+            // Sanitize license plate first
+            moto.LicensePlate = moto.LicensePlate.Trim().ToUpperInvariant();
+            
+            if (!Regex.IsMatch(moto.LicensePlate, @"^[A-Z]{3}-\d{4}$"))
+                throw new Exception("Invalid license plate format. Use the format XXX-1111.");
+
             var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.LicensePlate);
             if (motoExist != null)
                 throw new Exception("The motorcycle with the same license plate already exists.");
@@ -60,17 +72,23 @@ namespace RentalApi.Application.Services
         }
 
         /// <summary>
-        /// Changes the license plate of a motorcycle, ensuring uniqueness.
+        /// Updates the license plate of an existing motorcycle.
         /// </summary>
         /// <param name="identifier">Unique identifier of the motorcycle.</param>
-        /// <param name="license">New license plate.</param>
-        /// <returns>True if the update was successful.</returns>
-        /// <exception cref="Exception">Thrown if the motorcycle is not found or the license plate already exists on another motorcycle.</exception>
+        /// <param name="license">New license plate to assign.</param>
+        /// <returns>True if the update was successful, false otherwise.</returns>
+        /// <exception cref="Exception">Thrown if the motorcycle is not found, license format is invalid, or license already exists.</exception>
         public async Task<bool> ChangeMotoLicenseAsync(string identifier, string license)
         {
+            license = license.Trim().ToUpperInvariant();
+
+            if (!Regex.IsMatch(license, @"^[A-Z]{3}-\d{4}$"))
+                throw new Exception("Invalid license plate format. Use the format XXX-1111.");
+
             var motoExist = await _motoRepository.FindByMotoIdentifierAsync(identifier);
             if (motoExist == null)
                 throw new Exception("Motorcycle not found.");
+
             var motoSameLicense = await _motoRepository.FindByMotoLicenseAsync(license);
             if (motoSameLicense != null && motoSameLicense.Identifier != identifier)
                 throw new Exception("License plate already exists on another motorcycle.");
@@ -78,10 +96,10 @@ namespace RentalApi.Application.Services
         }
 
         /// <summary>
-        /// Deletes a registered motorcycle by its identifier.
+        /// Deletes a registered motorcycle from the system.
         /// </summary>
-        /// <param name="identifier">Unique identifier of the motorcycle.</param>
-        /// <returns>True if the deletion was successful.</returns>
+        /// <param name="identifier">Unique identifier of the motorcycle to delete.</param>
+        /// <returns>True if the deletion was successful, false otherwise.</returns>
         /// <exception cref="Exception">Thrown if the motorcycle is not found.</exception>
         public async Task<bool> DeleteRegisteredMotoAsync(string identifier)
         {

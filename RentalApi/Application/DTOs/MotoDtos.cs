@@ -1,43 +1,55 @@
-using System.Text.Json.Serialization;
+ using System.Text.Json.Serialization;
 
 namespace RentalApi.Application.DTOs
 {
     /// <summary>
-    /// DTO for creating a new motorcycle.
+    /// DTO used to create a new motorcycle via the API.
     /// </summary>
     public class CreateMotoRequest
     {
+        /// <summary>
+        /// Unique business identifier for the motorcycle (required).
+        /// </summary>
         [JsonPropertyName("identificador")]
         public string Identifier { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Manufacturing year of the motorcycle (must be between 2000 and current year).
+        /// </summary>
         [JsonPropertyName("ano")]
         public int Year { get; set; }
 
+        /// <summary>
+        /// Model name of the motorcycle (e.g., "Honda CG 160").
+        /// </summary>
         [JsonPropertyName("modelo")]
         public string MotorcycleModel { get; set; } = string.Empty;
 
+        /// <summary>
+        /// License plate in Brazilian format (e.g., "ABC-1234").
+        /// </summary>
         [JsonPropertyName("placa")]
         public string LicensePlate { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// DTO for updating the license plate of a motorcycle.
+    /// DTO used to update the license plate of an existing motorcycle.
     /// </summary>
     public class UpdateMotoPlacaRequest
     {
         /// <summary>
-        /// New license plate for the motorcycle.
+        /// New license plate for the motorcycle (must be unique and valid format).
         /// </summary>
         public string LicensePlate { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// DTO for returning motorcycle data in responses.
+    /// DTO used to return motorcycle data in API responses.
     /// </summary>
     public class MotoResponse
     {
         /// <summary>
-        /// Unique identifier for the motorcycle.
+        /// Unique business identifier for the motorcycle.
         /// </summary>
         [JsonPropertyName("identificador")]
         public string Identifier { get; set; } = string.Empty;
@@ -62,23 +74,23 @@ namespace RentalApi.Application.DTOs
     }
 
     /// <summary>
-    /// DTO for returning error messages in API responses.
+    /// DTO used to return error messages in API responses.
     /// </summary>
     public class ErrorResponse
     {
         /// <summary>
-        /// Error message.
+        /// Error message describing the problem.
         /// </summary>
         public string Message { get; set; } = string.Empty;
     }
 
     /// <summary>
-    /// DTO for returning success messages in API responses.
+    /// DTO used to return success messages in API responses.
     /// </summary>
     public class SuccessResponse
     {
         /// <summary>
-        /// Success message.
+        /// Success message describing the completed operation.
         /// </summary>
         public string Message { get; set; } = string.Empty;
     }

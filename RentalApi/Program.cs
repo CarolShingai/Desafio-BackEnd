@@ -14,7 +14,41 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Rental API - Sistema de Locação de Motos",
+        Version = "v1",
+        Description = @"API para gerenciamento de locação de motos.
+
+**Funcionalidades:**
+- 🏍️ Cadastro e gerenciamento de motos
+- 👨‍💼 Gestão de entregadores
+- 📅 Sistema de locação com planos flexíveis
+- 💰 Cálculo automático de valores e multas
+- 📊 Simulação de custos de devolução
+
+**Tecnologias:**
+- .NET 9
+- Entity Framework Core
+- PostgreSQL
+- RabbitMQ
+- Docker",
+        Contact = new OpenApiContact
+        {
+            Name = "Sistema de Locação",
+            Email = "contato@locacao.com"
+        }
+    });
+    
     c.ExampleFilters();
+    
+    // Include XML comments
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
 });
 builder.Services
     .AddSwaggerExamplesFromAssemblyOf<RentalApi.Application.DTOs.CreateRentalRequestExample>();

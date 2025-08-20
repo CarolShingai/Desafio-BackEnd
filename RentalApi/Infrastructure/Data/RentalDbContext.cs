@@ -4,28 +4,39 @@ using RentalApi.Domain.Entities;
 namespace RentalApi.Infrastructure.Data
 {
     /// <summary>
-    /// Database context for the rental system, manages entity configurations and database access.
+    /// Database context for the rental system.
+    /// Manages entity configurations, relationships, and provides access to the PostgreSQL database.
     /// </summary>
     public class RentalDbContext : DbContext
     {
-        /// <summary>
-        /// Initializes a new instance of the RentalDbContext class.
-        /// </summary>
-        /// <param name="options">The options to be used by the DbContext.</param>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RentalDbContext"/> class.
+    /// </summary>
+    /// <param name="options">The options to be used by the DbContext, including connection string and provider.</param>
         public RentalDbContext(DbContextOptions<RentalDbContext> options) : base(options) { }
 
-        /// <summary>
-        /// DbSet representing the motorcycles table.
-        /// </summary>
-        public DbSet<Moto> Motos { get; set; }
-        public DbSet<MotoNotification> MotoNotifications { get; set; }
-        public DbSet<DeliveryPerson> DeliveryPersons { get; set; }
-        public DbSet<RentMoto> RentMotos { get; set; }
+    /// <summary>
+    /// DbSet representing the motorcycles table.
+    /// </summary>
+    public DbSet<Moto> Motos { get; set; }
+    /// <summary>
+    /// DbSet representing the motorcycle notifications table.
+    /// </summary>
+    public DbSet<MotoNotification> MotoNotifications { get; set; }
+    /// <summary>
+    /// DbSet representing the delivery persons table.
+    /// </summary>
+    public DbSet<DeliveryPerson> DeliveryPersons { get; set; }
+    /// <summary>
+    /// DbSet representing the rentals table.
+    /// </summary>
+    public DbSet<RentMoto> RentMotos { get; set; }
 
-        /// <summary>
-        /// Configures the entity mappings and seeds initial data.
-        /// </summary>
-        /// <param name="modelBuilder">The builder being used to construct the model for the context.</param>
+    /// <summary>
+    /// Configures the entity mappings, relationships, and constraints for the rental system.
+    /// Sets up keys, indexes, required fields, and foreign key relationships for all entities.
+    /// </summary>
+    /// <param name="modelBuilder">The builder being used to construct the model for the context.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Moto>(entity =>
