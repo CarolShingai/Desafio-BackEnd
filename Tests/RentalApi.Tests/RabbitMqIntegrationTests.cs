@@ -116,9 +116,9 @@ namespace RentalApi.Tests
             var notifications = await notificationRepo.GetAllNotificationsAsync();
             
             Assert.NotEmpty(notifications);
-            var notification = notifications.FirstOrDefault(n => n.MotorcycleId == moto2024.Identificador);
+            var notification = notifications.FirstOrDefault(n => n.MotorcycleId == moto2024.Id);
             Assert.NotNull(notification);
-            Assert.Equal(moto2024.Identificador, notification.MotorcycleId);
+            Assert.Equal(moto2024.Id, notification.MotorcycleId);
             Assert.Contains("Moto registered successfully!", notification.Message);
         }
 
@@ -182,13 +182,13 @@ namespace RentalApi.Tests
             // Assert - Verificar que apenas as motos 2024 geraram notificações
             var notifications = await notificationRepo.GetAllNotificationsAsync();
             var relevantNotifications = notifications.Where(n => 
-                motos2024.Any(m => m.Identificador == n.MotorcycleId)).ToList();
+                motos2024.Any(m => m.Id == n.MotorcycleId)).ToList();
             
             Assert.Equal(2, relevantNotifications.Count); // Apenas 2 motos de 2024
             
             foreach (var notification in relevantNotifications)
             {
-                var correspondingMoto = motos2024.First(m => m.Identificador == notification.MotorcycleId);
+                var correspondingMoto = motos2024.First(m => m.Id == notification.MotorcycleId);
                 Assert.Equal(2024, correspondingMoto.Ano);
             }
         }

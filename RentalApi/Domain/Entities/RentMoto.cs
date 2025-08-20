@@ -4,14 +4,16 @@ namespace RentalApi.Domain.Entities
     {
         public Guid Id { get; set; }
         public string RentId { get; set; } = string.Empty;
-        public string MotoId { get; set; } = string.Empty;
-        public string DeliveryPersonId { get; set; } = string.Empty;
+        public int MotoId { get; set; }
+        public Guid DeliveryPersonId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? ExpectedReturnDate { get; set; }
         public DateTime? ActualReturnDate { get; set; }
 
         public decimal PricePerDay { get; set; }
         public decimal TotalCost { get; set; }
+        public int PlanDays { get; set; }
+        public decimal DailyRate { get; set; }
 
         public decimal? FineAmount { get; set; }
         public bool IsDeliveryPersonActive { get; set; } = false;
@@ -20,7 +22,7 @@ namespace RentalApi.Domain.Entities
         public RentMoto() {}
 
 
-        public RentMoto(string rentId, string motoId, string deliveryPersonId, DateTime startDate, decimal pricePerDay)
+        public RentMoto(string rentId, int motoId, Guid deliveryPersonId, DateTime startDate, decimal pricePerDay)
         {
             Id = Guid.NewGuid();
             RentId = rentId;

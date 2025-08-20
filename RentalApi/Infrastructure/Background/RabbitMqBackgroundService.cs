@@ -29,7 +29,7 @@ namespace RentalApi.Infrastructure.Background
                         var notificationRepo = innerScope.ServiceProvider.GetRequiredService<IMotoNotificationRepository>();
                         var notification = new MotoNotification
                         {
-                            MotorcycleId = moto.Identificador,
+                            MotorcycleId = moto.Id,
                             Message = "Moto registered successfully!",
                             NotifiedAt = DateTime.UtcNow
                         };

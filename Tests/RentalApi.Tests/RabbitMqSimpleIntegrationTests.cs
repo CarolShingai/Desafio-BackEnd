@@ -101,7 +101,7 @@ namespace RentalApi.Tests
             var notification = new MotoNotification
             {
                 Id = Guid.NewGuid(),
-                MotorcycleId = "test-123",
+                MotorcycleId = 123,
                 Year = 2024,
                 Model = "Test Model",
                 LicensePlate = "TEST123",
@@ -138,13 +138,14 @@ namespace RentalApi.Tests
         public async Task MotoNotification_Constructor_ShouldCreateValid_Notification()
         {
             // Arrange
-            var motorcycleId = "test-moto-123";
+            var motorcycleId = 123;
+            var motorcycleIdentifier = "test-moto-123";
             var year = 2024;
             var model = "Honda CB 600F";
             var licensePlate = "ABC1234";
 
             // Act
-            var notification = new MotoNotification(motorcycleId, year, model, licensePlate);
+            var notification = new MotoNotification(motorcycleId, motorcycleIdentifier, year, model, licensePlate);
 
             // Assert
             Assert.NotEqual(Guid.Empty, notification.Id);

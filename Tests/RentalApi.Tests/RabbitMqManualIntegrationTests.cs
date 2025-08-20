@@ -81,6 +81,7 @@ namespace RentalApi.Tests
                     {
                         // Usar o mesmo scope para garantir que estamos usando o mesmo contexto de banco
                         var notification = new MotoNotification(
+                            moto.Id,
                             moto.Identificador,
                             moto.Ano,
                             moto.Modelo,
@@ -106,9 +107,9 @@ namespace RentalApi.Tests
             var notifications = await notificationRepo.GetAllNotificationsAsync();
             Assert.NotEmpty(notifications);
             
-            var notification = notifications.FirstOrDefault(n => n.MotorcycleId == moto2024.Identificador);
+            var notification = notifications.FirstOrDefault(n => n.MotorcycleId == moto2024.Id);
             Assert.NotNull(notification);
-            Assert.Equal(moto2024.Identificador, notification.MotorcycleId);
+            Assert.Equal(moto2024.Id, notification.MotorcycleId);
             Assert.Equal(2024, notification.Year);
             Assert.Equal(moto2024.Modelo, notification.Model);
             Assert.Equal(moto2024.Placa, notification.LicensePlate);
@@ -142,6 +143,7 @@ namespace RentalApi.Tests
                     {
                         // Usar o mesmo scope
                         var notification = new MotoNotification(
+                            moto.Id,
                             moto.Identificador,
                             moto.Ano,
                             moto.Modelo,
@@ -164,7 +166,7 @@ namespace RentalApi.Tests
             Assert.True(processedCount > 0);
             
             var notifications = await notificationRepo.GetAllNotificationsAsync();
-            var moto2023Notifications = notifications.Where(n => n.MotorcycleId == moto2023.Identificador);
+            var moto2023Notifications = notifications.Where(n => n.MotorcycleId == moto2023.Id);
             Assert.Empty(moto2023Notifications); // Não deve ter notificações para motos não-2024
         }
 

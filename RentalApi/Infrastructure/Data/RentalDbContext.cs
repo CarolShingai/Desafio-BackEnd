@@ -44,6 +44,11 @@ namespace RentalApi.Infrastructure.Data
                 entity.Property(n => n.Message).IsRequired();
                 entity.Property(n => n.NotifiedAt).IsRequired();
                 entity.HasIndex(n => n.MotorcycleId);
+
+                entity.HasOne<Moto>()
+                    .WithMany()
+                    .HasForeignKey(n => n.MotorcycleId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
             modelBuilder.Entity<DeliveryPerson>(entity =>
             {
@@ -69,6 +74,16 @@ namespace RentalApi.Infrastructure.Data
                 entity.Property(r => r.ExpectedReturnDate).IsRequired(false);
                 entity.Property(r => r.ActualReturnDate).IsRequired(false);
                 entity.Property(r => r.DeliveryPersonId).IsRequired();
+
+                entity.HasOne<Moto>()
+                    .WithMany()
+                    .HasForeignKey(r => r.MotoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<DeliveryPerson>()
+                    .WithMany()
+                    .HasForeignKey(r => r.DeliveryPersonId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
             // Seed initial data for Moto entity
             modelBuilder.Entity<Moto>().HasData(
