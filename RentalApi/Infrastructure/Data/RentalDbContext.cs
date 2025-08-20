@@ -56,7 +56,9 @@ namespace RentalApi.Infrastructure.Data
                 entity.HasIndex(d => d.Identifier).IsUnique();
                 entity.Property(d => d.Identifier).IsRequired().HasMaxLength(50);
                 entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
-                entity.Property(d => d.BirthDate).IsRequired().HasMaxLength(20);
+                entity.Property(d => d.BirthDate)
+                    .IsRequired()
+                    .HasColumnType("timestamp with time zone");
                 entity.HasIndex(d => d.Cnh).IsUnique();
                 entity.Property(d => d.Cnh).IsRequired().HasMaxLength(11);
                 entity.Property(d => d.CnhType).IsRequired().HasMaxLength(3);
@@ -89,19 +91,6 @@ namespace RentalApi.Infrastructure.Data
             modelBuilder.Entity<Moto>().HasData(
                 new Moto { Id = 1, Identificador = "moto123", Ano = 2020, Modelo = "Mottu Sport", Placa = "CDX-0101", IsRented = true }
             );
-            // modelBuilder.Entity<DeliveryPerson>().HasData(
-            //     new DeliveryPerson
-            //     {
-            //         Id = 111111,
-            //         Identifier = "entregador123",
-            //         Name = "João Silva",
-            //         Cnpj = "12345678901234",
-            //         BirthDate = "1990-01-01",
-            //         Cnh = "12345678901",
-            //         CnhType = "A",
-            //         CnhImage = "base64string"
-            //     }
-            // );
         }
     }
 }

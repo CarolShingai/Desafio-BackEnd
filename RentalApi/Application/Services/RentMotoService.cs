@@ -8,11 +8,13 @@ namespace RentalApi.Application.Services
 	{
 		private readonly IRentMotoRepository _rentMotoRepository;
 		private readonly IDeliveryPersonRepository _deliveryRepo;
+		private readonly IMotoRepository _motoRepository;
 
-		public RentMotoService(IRentMotoRepository rentMotoRepository, IDeliveryPersonRepository deliveryPersonRepository)
+		public RentMotoService(IRentMotoRepository rentMotoRepository, IDeliveryPersonRepository deliveryPersonRepository, IMotoRepository motoRepository)
 		{
 			_rentMotoRepository = rentMotoRepository;
 			_deliveryRepo = deliveryPersonRepository;
+			_motoRepository = motoRepository;
 		}
 		public async Task<RentMoto> CreateRentalAsync(string deliveryPersonId, string motoId, int planDays)
 		{
@@ -23,6 +25,10 @@ namespace RentalApi.Application.Services
 			if (deliveryPerson.CnhType != "A" && deliveryPerson.CnhType != "A+B")
 				throw new InvalidOperationException("Somente entregadores habilitados na categoria A podem efetuar uma locação");
 
+			var moto = await _motoRepository.FindByMotoIdentifierAsync(motoId);
+			if (moto == null)
+				throw new ArgumentException("Moto não encontrada");
+
 			var plan = GetRentalPlan(planDays);
 			var startDate = DateTime.UtcNow.Date.AddDays(1);
 			var expectedEndDate = startDate.AddDays(planDays);
@@ -31,8 +37,8 @@ namespace RentalApi.Application.Services
 			{
 				Id = Guid.NewGuid(),
 				RentId = Guid.NewGuid().ToString(),
-				MotoId = int.Parse(motoId),
-				DeliveryPersonId = Guid.Parse(deliveryPersonId),
+				MotoId = moto.Id,
+				DeliveryPersonId = deliveryPerson.Id,
 				StartDate = startDate,
 				ExpectedReturnDate = expectedEndDate,
 				PlanDays = planDays,

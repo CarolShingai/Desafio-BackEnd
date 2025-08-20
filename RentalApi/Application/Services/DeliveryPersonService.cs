@@ -21,7 +21,7 @@ namespace RentalApi.Application.Services
                 Identifier = dto.Identifier,
                 Name = dto.Name,
                 Cnpj = dto.Cnpj,
-                BirthDate = dto.BirthDate,
+                BirthDate = DateTime.SpecifyKind(dto.BirthDate, DateTimeKind.Utc),
                 Cnh = dto.CnhNumber,
                 CnhType = dto.CnhType,
                 CnhImage = dto.CnhImage
