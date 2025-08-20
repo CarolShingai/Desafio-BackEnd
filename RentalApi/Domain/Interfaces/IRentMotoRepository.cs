@@ -4,9 +4,8 @@ namespace RentalApi.Domain.Interfaces
 {
     public interface IRentMotoRepository
     {
-        Task<RentMoto> CreateRentalAsync(string deliveryPersonId, string motoId, int planDays, DateTime expectedEndDate);
-        Task<decimal> GetRentalTotalValueAsync(string rentId);
-        Task<RentMoto> InformReturnDateAsync(string rentId, DateTime actualReturnDate);
-        Task<decimal> CalculatePenaltyOrAdditionalAsync(string rentId, DateTime actualReturnDate);
+        Task<RentMoto> AddRentalAsync(RentMoto rentMoto);
+        Task<RentMoto?> GetRentalByIdAsync(string id);
+        Task<RentMoto> UpdateRentAsync(RentMoto rentMoto);
     }
 }

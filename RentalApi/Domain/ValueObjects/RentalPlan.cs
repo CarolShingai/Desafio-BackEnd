@@ -6,14 +6,13 @@ namespace RentalApi.Domain.ValueObjects
 		public decimal DailyRate { get; set; }
 		public decimal EarlyReturnPenalty { get; set; }
 		public decimal AfterReturnPenalty { get; set; } = 50;
-	};
-
-	private readonly List<RentalPlan> _rentalPlans = new()
-	{
-		new RentalPlan { Days = 7, DailyRate = 30m, EarlyReturnPenalty = 0.2m },
-		new RentalPlan { Days = 15, DailyRate = 28m, EarlyReturnPenalty = 0.4m },
-		new RentalPlan { Days = 30, DailyRate = 22m, EarlyReturnPenalty = 0m },
-		new RentalPlan { Days = 45, DailyRate = 20m, EarlyReturnPenalty = 0m },
-		new RentalPlan { Days = 50, DailyRate = 18m, EarlyReturnPenalty = 0m }
+		private readonly List<RentalPlan> _rentalPlans = new()
+		{
+			new RentalPlan { Days = 7, DailyRate = 30m, EarlyReturnPenalty = 0.2m },
+			new RentalPlan { Days = 15, DailyRate = 28m, EarlyReturnPenalty = 0.4m },
+			new RentalPlan { Days = 30, DailyRate = 22m, EarlyReturnPenalty = 0m },
+			new RentalPlan { Days = 45, DailyRate = 20m, EarlyReturnPenalty = 0m },
+			new RentalPlan { Days = 50, DailyRate = 18m, EarlyReturnPenalty = 0m }
+		};
 	};
 }

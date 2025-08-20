@@ -24,7 +24,7 @@ builder.Services.AddSingleton<IMessageConsumer, RabbitMqConsumer>();
 builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 
 // DeliveryPerson Dependencies
-builder.Services.AddScoped<IDeliveryPerson, DeliveryRepository>();
+builder.Services.AddScoped<IDeliveryPersonRepository, DeliveryRepository>();
 builder.Services.AddScoped<IDeliveryPersonService, DeliveryPersonService>();
 
 // Background Services

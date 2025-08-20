@@ -5,7 +5,7 @@ using RentalApi.Infrastructure.Data;
 
 namespace RentalApi.Infrastructure.Repositories
 {
-    public class DeliveryRepository : IDeliveryPerson
+    public class DeliveryRepository : IDeliveryPersonRepository
     {
         private readonly RentalDbContext _context;
         public DeliveryRepository(RentalDbContext context)

@@ -6,9 +6,9 @@ namespace RentalApi.Application.Services
 {
     public class DeliveryPersonService : IDeliveryPersonService
     {
-        private readonly IDeliveryPerson _deliveryPersonRepository;
+        private readonly IDeliveryPersonRepository _deliveryPersonRepository;
 
-        public DeliveryPersonService(IDeliveryPerson deliveryPersonRepository)
+        public DeliveryPersonService(IDeliveryPersonRepository deliveryPersonRepository)
         {
             _deliveryPersonRepository = deliveryPersonRepository;
         }
