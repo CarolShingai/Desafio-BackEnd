@@ -112,11 +112,13 @@ namespace RentalApi.Application.DTOs
         /// <summary>
         /// Total calculated value for the rental including any penalties or discounts.
         /// </summary>
+        [JsonPropertyName("valor_total")]
         public decimal TotalValue { get; set; }
         
         /// <summary>
         /// Detailed breakdown of the calculation including base cost, penalties, and discounts.
         /// </summary>
+        [JsonPropertyName("detalhes")]
         public string Details { get; set; } = string.Empty;
     }
     

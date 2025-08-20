@@ -28,7 +28,7 @@ namespace RentalApi.Controllers
     /// <response code="400">Invalid input data</response>
     /// <example>
     /// {
-    ///   "identifier": "entregador123",
+    ///   "identifier": "entregador",
     ///   "name": "João Silva",
     ///   "cnpj": "12.345.678/0001-90",
     ///   "birthDate": "1990-05-15",

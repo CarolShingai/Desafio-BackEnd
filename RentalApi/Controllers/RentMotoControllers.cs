@@ -6,7 +6,7 @@ using RentalApi.Domain.Interfaces;
 namespace RentalApi.Controllers
 {
     /// <summary>
-    /// Controller responsible for managing motorcycle rentals.
+    /// Controller responsável pela gestão de locações de motos
     /// </summary>
     [ApiController]
     [Route("locacao")]
@@ -21,14 +21,14 @@ namespace RentalApi.Controllers
             _rentMotoService = rentMotoService;
         }
 
-    /// <summary>
-    /// Creates a new motorcycle rental.
-    /// </summary>
-    /// <param name="request">Rental data to be created</param>
-    /// <returns>Created rental data</returns>
-    /// <response code="400">Invalid input data</response>
+        /// <summary>
+        /// Cria uma nova locação de moto
+        /// </summary>
+        /// <param name="request">Dados da locação a ser criada</param>
+        /// <returns>Dados da locação criada</returns>
+        /// <response code="201">Locação criada com sucesso</response>
+        /// <response code="400">Dados de entrada inválidos</response>
         [HttpPost]
-        [ProducesResponseType(400)]
         public async Task<IActionResult> RentMotorcycle([FromBody] CreateRentalRequest request)
         {
             if (!ModelState.IsValid)
@@ -39,12 +39,13 @@ namespace RentalApi.Controllers
             return CreatedAtRoute(null, result);
         }
 
-    /// <summary>
-    /// Retrieves a specific rental by ID.
-    /// </summary>
-    /// <param name="id">Unique rental identifier</param>
-    /// <returns>Rental data if found</returns>
-    /// <response code="400">Invalid input data</response>
+        /// <summary>
+        /// Consulta uma locação específica por ID
+        /// </summary>
+        /// <param name="id">Identificador único da locação</param>
+        /// <returns>Dados da locação encontrada</returns>
+        /// <response code="200">Locação encontrada com sucesso</response>
+        /// <response code="400">Locação não encontrada</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRentById(string id)
         {
@@ -54,13 +55,14 @@ namespace RentalApi.Controllers
             return Ok(result);
         }
 
-    /// <summary>
-    /// Sets the return date for the motorcycle and calculates the final value.
-    /// </summary>
-    /// <param name="id">Unique rental identifier</param>
-    /// <param name="request">Return date data</param>
-    /// <returns>Total rental value with penalties/discounts applied</returns>
-    /// <response code="400">Invalid input data</response>
+        /// <summary>
+        /// Informa a data de devolução da moto e calcula o valor final
+        /// </summary>
+        /// <param name="id">Identificador único da locação</param>
+        /// <param name="request">Data de retorno da moto</param>
+        /// <returns>Valor total da locação com multas/descontos aplicados</returns>
+        /// <response code="200">Data de devolução registrada com sucesso</response>
+        /// <response code="400">Dados de entrada inválidos</response>
         [HttpPut("{id}/devolucao")]
         public async Task<IActionResult> UpdateRent(string id, [FromBody] InformReturnDateRequest request)
         {
