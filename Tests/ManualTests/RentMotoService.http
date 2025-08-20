@@ -1,0 +1,205 @@
+# Testes Manuais para RentMotoService
+# Use este arquivo com extensões como REST Client no VS Code
+
+### Variáveis
+@baseUrl = https://localhost:7000
+@deliveryPersonId = {{$guid}}
+@motoId = 123
+@rentId = 
+
+### 1. Criar Entregador com CNH categoria A
+POST {{baseUrl}}/api/delivery-person
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "cnpj": "12345678901234",
+  "dataNascimento": "1990-01-01",
+  "numeroCnh": "123456789",
+  "cnhType": "A",
+  "imagemCnh": "base64_image_here"
+}
+
+### 2. Criar Moto para locação
+POST {{baseUrl}}/api/moto
+Content-Type: application/json
+
+{
+  "identificador": "MOTO-{{$randomInt}}",
+  "ano": 2024,
+  "modelo": "Honda CB 600F",
+  "placa": "ABC1234"
+}
+
+### 3. Teste: Criar Locação de 7 dias (Cenário Normal)
+POST {{baseUrl}}/api/rent-moto
+Content-Type: application/json
+
+{
+  "deliveryPersonId": "{{deliveryPersonId}}",
+  "motoId": "{{motoId}}",
+  "planDays": 7
+}
+
+### Resultado Esperado:
+# - Status: 200 OK
+# - StartDate: D+1 (amanhã)
+# - ExpectedReturnDate: D+8
+# - DailyRate: 30.00
+# - TotalCost: 210.00 (7 × 30)
+
+### 4. Teste: Simular Devolução Antecipada (2 dias antes)
+POST {{baseUrl}}/api/rent-moto/{{rentId}}/simulate-return
+Content-Type: application/json
+
+{
+  "returnDate": "2025-08-26" // 2 dias antes do prazo
+}
+
+### Resultado Esperado:
+# - Valor: 222.00
+# - Cálculo: Base R$210 + Multa 20% sobre 2 dias não utilizados (R$60 × 0.2 = R$12)
+
+### 5. Teste: Simular Devolução Atrasada (3 dias depois)
+POST {{baseUrl}}/api/rent-moto/{{rentId}}/simulate-return
+Content-Type: application/json
+
+{
+  "returnDate": "2025-08-31" // 3 dias após o prazo
+}
+
+### Resultado Esperado:
+# - Valor: 360.00
+# - Cálculo: Base R$210 + Multa atraso (3 × R$50 = R$150)
+
+### 6. Teste: Informar Devolução Real
+PUT {{baseUrl}}/api/rent-moto/{{rentId}}/return
+Content-Type: application/json
+
+{
+  "actualReturnDate": "2025-08-26"
+}
+
+### Resultado Esperado:
+# - Status: 200 OK
+# - ActualReturnDate: 2025-08-26
+# - TotalCost: 222.00 (com multa aplicada)
+
+### 7. Teste: Consultar Valor Final
+GET {{baseUrl}}/api/rent-moto/{{rentId}}/final-value
+
+### Resultado Esperado:
+# - Valor: 222.00 (mesmo valor calculado na devolução)
+
+### 8. Teste: Criar Locação de 15 dias
+POST {{baseUrl}}/api/rent-moto
+Content-Type: application/json
+
+{
+  "deliveryPersonId": "{{deliveryPersonId}}",
+  "motoId": "{{motoId}}",
+  "planDays": 15
+}
+
+### Resultado Esperado:
+# - DailyRate: 28.00
+# - TotalCost: 420.00 (15 × 28)
+
+### 9. Teste: Criar Locação de 30 dias (sem multa por devolução antecipada)
+POST {{baseUrl}}/api/rent-moto
+Content-Type: application/json
+
+{
+  "deliveryPersonId": "{{deliveryPersonId}}",
+  "motoId": "{{motoId}}",
+  "planDays": 30
+}
+
+### Resultado Esperado:
+# - DailyRate: 22.00
+# - TotalCost: 660.00 (30 × 22)
+
+### 10. Teste: CNH Inválida (deve falhar)
+POST {{baseUrl}}/api/delivery-person
+Content-Type: application/json
+
+{
+  "nome": "Maria Santos",
+  "cnpj": "98765432109876",
+  "dataNascimento": "1995-05-15",
+  "numeroCnh": "987654321",
+  "cnhType": "B",
+  "imagemCnh": "base64_image_here"
+}
+
+# Depois tentar criar locação:
+POST {{baseUrl}}/api/rent-moto
+Content-Type: application/json
+
+{
+  "deliveryPersonId": "{{$guid}}", // ID do entregador com CNH B
+  "motoId": "{{motoId}}",
+  "planDays": 7
+}
+
+### Resultado Esperado:
+# - Status: 400 Bad Request
+# - Erro: "Somente entregadores habilitados na categoria A podem efetuar uma locação"
+
+### 11. Teste: Plano Inválido (deve falhar)
+POST {{baseUrl}}/api/rent-moto
+Content-Type: application/json
+
+{
+  "deliveryPersonId": "{{deliveryPersonId}}",
+  "motoId": "{{motoId}}",
+  "planDays": 10
+}
+
+### Resultado Esperado:
+# - Status: 400 Bad Request
+# - Erro: "Plano de locação inválido. Planos disponíveis: 7, 15, 30, 45, 50 dias"
+
+### 12. Teste: Dupla Informação de Devolução (deve falhar)
+# Primeiro informar devolução:
+PUT {{baseUrl}}/api/rent-moto/{{rentId}}/return
+Content-Type: application/json
+
+{
+  "actualReturnDate": "2025-08-26"
+}
+
+# Depois tentar informar novamente:
+PUT {{baseUrl}}/api/rent-moto/{{rentId}}/return
+Content-Type: application/json
+
+{
+  "actualReturnDate": "2025-08-27"
+}
+
+### Resultado Esperado:
+# - Status: 400 Bad Request
+# - Erro: "Data de devolução já foi informada para esta locação"
+
+### CENÁRIOS DE TESTE RESUMIDOS:
+
+# PLANO 7 DIAS (R$30/dia, multa 20% antecipada):
+# - Base: R$210
+# - Antecipada 2 dias: R$222 (+ R$12 multa)
+# - Atrasada 3 dias: R$360 (+ R$150 multa)
+
+# PLANO 15 DIAS (R$28/dia, multa 40% antecipada):
+# - Base: R$420  
+# - Antecipada 3 dias: R$453.60 (+ R$33.60 multa)
+# - Atrasada 2 dias: R$520 (+ R$100 multa)
+
+# PLANO 30 DIAS (R$22/dia, sem multa antecipada):
+# - Base: R$660
+# - Antecipada 5 dias: R$660 (sem multa)
+# - Atrasada 4 dias: R$860 (+ R$200 multa)
+
+# PLANO 45 DIAS (R$20/dia):
+# - Base: R$900
+
+# PLANO 50 DIAS (R$18/dia):
+# - Base: R$900
