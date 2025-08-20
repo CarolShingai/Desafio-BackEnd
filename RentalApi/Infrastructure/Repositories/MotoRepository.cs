@@ -19,10 +19,10 @@ namespace RentalApi.Infrastructure.Repositories
             _motos.Add(new Moto
             {
                 Id = 1,
-                Ano = 2023,
-                Modelo = "XL200",
-                Placa = "ABC-1272",
-                Identificador = "Moto-001",
+                Year = 2023,
+                MotorcycleModel = "XL200",
+                LicensePlate = "ABC-1272",
+                Identifier = "Moto-001",
                 IsRented = false
             });
         }
@@ -40,7 +40,7 @@ namespace RentalApi.Infrastructure.Repositories
         /// <returns>The Moto entity if found, otherwise null.</returns>
         public async Task<Moto?> FindByMotoIdentifierAsync(string identifier)
         {
-            var moto = _motos.FirstOrDefault(m => m.Identificador == identifier);
+            var moto = _motos.FirstOrDefault(m => m.Identifier == identifier);
             return await Task.FromResult(moto);
         }
         /// <summary>
@@ -50,7 +50,7 @@ namespace RentalApi.Infrastructure.Repositories
         /// <returns>The Moto entity if found, otherwise null.</returns>
         public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
-            var moto = _motos.FirstOrDefault(m => m.Placa == license);
+            var moto = _motos.FirstOrDefault(m => m.LicensePlate == license);
             return await Task.FromResult(moto);
         }
         /// <summary>
@@ -60,7 +60,7 @@ namespace RentalApi.Infrastructure.Repositories
         /// <returns>List of Moto entities matching the search.</returns>
         public async Task<List<Moto>> SearchMotosByLicenseAsync(string license)
         {
-            var result = _motos.Where(m => m.Placa.Contains(license)).ToList();
+            var result = _motos.Where(m => m.LicensePlate.Contains(license)).ToList();
             return await Task.FromResult(result);
         }
         /// <summary>
@@ -88,7 +88,7 @@ namespace RentalApi.Infrastructure.Repositories
             var equalLicense = await SearchMotosByLicenseAsync(license);
             if (equalLicense != null) return false;
 
-            moto.Placa = license;
+            moto.LicensePlate = license;
             return await Task.FromResult(true);
         }
 

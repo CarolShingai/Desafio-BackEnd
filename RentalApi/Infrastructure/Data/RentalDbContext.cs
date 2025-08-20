@@ -31,12 +31,12 @@ namespace RentalApi.Infrastructure.Data
             modelBuilder.Entity<Moto>(entity =>
             {
                 entity.HasKey(m => m.Id);
-                entity.HasIndex(m => m.Identificador).IsUnique();
-                entity.Property(m => m.Identificador).IsRequired().HasMaxLength(50);
-                entity.HasIndex(m => m.Placa).IsUnique();
-                entity.Property(m => m.Placa).IsRequired().HasMaxLength(10);
-                entity.Property(m => m.Modelo).IsRequired().HasMaxLength(100);
-                entity.Property(m => m.Ano).IsRequired();
+                entity.HasIndex(m => m.Identifier).IsUnique();
+                entity.Property(m => m.Identifier).IsRequired().HasMaxLength(50);
+                entity.HasIndex(m => m.LicensePlate).IsUnique();
+                entity.Property(m => m.LicensePlate).IsRequired().HasMaxLength(10);
+                entity.Property(m => m.MotorcycleModel).IsRequired().HasMaxLength(100);
+                entity.Property(m => m.Year).IsRequired();
             });
             modelBuilder.Entity<MotoNotification>(entity =>
             {
@@ -87,10 +87,6 @@ namespace RentalApi.Infrastructure.Data
                     .HasForeignKey(r => r.DeliveryPersonId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-            // Seed initial data for Moto entity
-            modelBuilder.Entity<Moto>().HasData(
-                new Moto { Id = 1, Identificador = "moto123", Ano = 2020, Modelo = "Mottu Sport", Placa = "CDX-0101", IsRented = true }
-            );
         }
     }
 }

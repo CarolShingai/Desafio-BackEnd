@@ -49,11 +49,11 @@ namespace RentalApi.Application.Services
         /// <exception cref="Exception">Thrown if a motorcycle with the same license plate already exists.</exception>
         public async Task<Moto> RegisterNewMotoAsync(Moto moto)
         {
-            var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.Placa);
+            var motoExist = await _motoRepository.FindByMotoLicenseAsync(moto.LicensePlate);
             if (motoExist != null)
                 throw new Exception("The motorcycle with the same license plate already exists.");
 
-            moto.Message = $"Moto com placa {moto.Placa} registrada!";
+            moto.Message = $"Moto com placa {moto.LicensePlate} registrada!";
             moto.NotifiedAt = DateTime.UtcNow;
             await _messagePublisher.PublishAsync(moto, "motoQueue");
             return await _motoRepository.AddMotoAsync(moto);
@@ -72,7 +72,7 @@ namespace RentalApi.Application.Services
             if (motoExist == null)
                 throw new Exception("Motorcycle not found.");
             var motoSameLicense = await _motoRepository.FindByMotoLicenseAsync(license);
-            if (motoSameLicense != null && motoSameLicense.Identificador != identifier)
+            if (motoSameLicense != null && motoSameLicense.Identifier != identifier)
                 throw new Exception("License plate already exists on another motorcycle.");
             return await _motoRepository.UpdateMotoLicenseAsync(identifier, license);
         }

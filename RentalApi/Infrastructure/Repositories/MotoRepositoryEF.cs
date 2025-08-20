@@ -39,7 +39,7 @@ namespace RentalApi.Infrastructure.Repositories
         /// <returns>The Moto entity if found, otherwise null.</returns>
         public async Task<Moto?> FindByMotoIdentifierAsync(string identifier)
         {
-            return await _context.Motos.FirstOrDefaultAsync(m => m.Identificador == identifier);
+            return await _context.Motos.FirstOrDefaultAsync(m => m.Identifier == identifier);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace RentalApi.Infrastructure.Repositories
         /// <returns>The Moto entity if found, otherwise null.</returns>
         public async Task<Moto?> FindByMotoLicenseAsync(string license)
         {
-            return await _context.Motos.FirstOrDefaultAsync(m => m.Placa == license);
+            return await _context.Motos.FirstOrDefaultAsync(m => m.LicensePlate == license);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace RentalApi.Infrastructure.Repositories
         public async Task<List<Moto>> SearchMotosByLicenseAsync(string license)
         {
             return await _context.Motos
-                .Where(m => m.Placa.Contains(license)).ToListAsync();
+                .Where(m => m.LicensePlate.Contains(license)).ToListAsync();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace RentalApi.Infrastructure.Repositories
             var moto = await FindByMotoIdentifierAsync(identifier);
             if (moto == null) return false;
 
-            moto.Placa = license;
+            moto.LicensePlate = license;
             await _context.SaveChangesAsync();
             return true;
         }

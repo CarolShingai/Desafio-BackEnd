@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace RentalApi.Application.DTOs
 {
     /// <summary>
@@ -5,25 +7,17 @@ namespace RentalApi.Application.DTOs
     /// </summary>
     public class CreateMotoRequest
     {
-        /// <summary>
-        /// Unique identifier for the motorcycle.
-        /// </summary>
-        public string Identificador { get; set; } = string.Empty;
+        [JsonPropertyName("identificador")]
+        public string Identifier { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Manufacturing year of the motorcycle.
-        /// </summary>
-        public int Ano { get; set; }
+        [JsonPropertyName("ano")]
+        public int Year { get; set; }
 
-        /// <summary>
-        /// Model name of the motorcycle.
-        /// </summary>
-        public string Modelo { get; set; } = string.Empty;
+        [JsonPropertyName("modelo")]
+        public string MotorcycleModel { get; set; } = string.Empty;
 
-        /// <summary>
-        /// License plate of the motorcycle.
-        /// </summary>
-        public string Placa { get; set; } = string.Empty;
+        [JsonPropertyName("placa")]
+        public string LicensePlate { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -34,7 +28,7 @@ namespace RentalApi.Application.DTOs
         /// <summary>
         /// New license plate for the motorcycle.
         /// </summary>
-        public string Placa { get; set; } = string.Empty;
+        public string LicensePlate { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -45,22 +39,26 @@ namespace RentalApi.Application.DTOs
         /// <summary>
         /// Unique identifier for the motorcycle.
         /// </summary>
-        public string Identificador { get; set; } = string.Empty;
+        [JsonPropertyName("identificador")]
+        public string Identifier { get; set; } = string.Empty;
 
         /// <summary>
         /// Manufacturing year of the motorcycle.
         /// </summary>
-        public int Ano { get; set; }
+        [JsonPropertyName("ano")]
+        public int Year { get; set; }
 
         /// <summary>
         /// Model name of the motorcycle.
         /// </summary>
-        public string Modelo { get; set; } = string.Empty;
+        [JsonPropertyName("modelo")]
+        public string MotorcycleModel { get; set; } = string.Empty;
 
         /// <summary>
         /// License plate of the motorcycle.
         /// </summary>
-        public string Placa { get; set; } = string.Empty;
+        [JsonPropertyName("placa")]
+        public string LicensePlate { get; set; } = string.Empty;
     }
 
     /// <summary>

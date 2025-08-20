@@ -14,22 +14,22 @@ namespace RentalApi.Domain.Entities
         /// <summary>
         /// Unique identifier for the motorcycle (business key).
         /// </summary>
-        public string Identificador { get; set; } = string.Empty;
+        public string Identifier { get; set; } = string.Empty;
 
         /// <summary>
         /// Manufacturing year of the motorcycle.
         /// </summary>
-        public int Ano { get; set; }
+        public int Year { get; set; }
 
         /// <summary>
         /// Model name of the motorcycle.
         /// </summary>
-        public string Modelo { get; set; } = string.Empty;
+        public string MotorcycleModel { get; set; } = string.Empty;
 
         /// <summary>
         /// License plate of the motorcycle.
         /// </summary>
-        public string Placa { get; set; } = string.Empty;
+        public string LicensePlate { get; set; } = string.Empty;
         public bool IsRented { get; set; } = false;
 
         public DateTime NotifiedAt { get; set; }

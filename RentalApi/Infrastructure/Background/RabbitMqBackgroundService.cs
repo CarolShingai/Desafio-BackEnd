@@ -23,7 +23,7 @@ namespace RentalApi.Infrastructure.Background
             await messageConsumer.StartConsumingAsync<Moto>("motoQueue",
                 async moto =>
                 {
-                    if (moto.Ano == 2024)
+                    if (moto.Year == 2024)
                     {
                         using var innerScope = _serviceProvider.CreateAsyncScope();
                         var notificationRepo = innerScope.ServiceProvider.GetRequiredService<IMotoNotificationRepository>();

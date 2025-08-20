@@ -9,7 +9,7 @@ namespace RentalApi.Application.DTOs
             return new CreateRentalRequest
             {
                 DeliveryPersonId = "entregador123",
-                MotoId = "1",
+                MotoId = "moto123",
                 PlanDays = 7
             };
         }

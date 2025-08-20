@@ -34,20 +34,20 @@ namespace RentalApi.Controllers
         {
             var moto = new Moto
             {
-                Identificador = request.Identificador,
-                Ano = request.Ano,
-                Modelo = request.Modelo,
-                Placa = request.Placa
+                Identifier = request.Identifier,
+                Year = request.Year,
+                MotorcycleModel = request.MotorcycleModel,
+                LicensePlate = request.LicensePlate
             };
             var createdMoto = await _motoService.RegisterNewMotoAsync(moto);
             var response = new MotoResponse
             {
-                Identificador = createdMoto.Identificador,
-                Ano = createdMoto.Ano,
-                Modelo = createdMoto.Modelo,
-                Placa = createdMoto.Placa
+                Identifier = createdMoto.Identifier,
+                Year = createdMoto.Year,
+                MotorcycleModel = createdMoto.MotorcycleModel,
+                LicensePlate = createdMoto.LicensePlate
             };
-            return CreatedAtAction(nameof(GetMotoById), new { id = response.Identificador }, response);
+            return CreatedAtAction(nameof(GetMotoById), new { id = response.Identifier }, response);
         }
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace RentalApi.Controllers
             var motos = await _motoService.GetAllMoto();
             var response = motos.Select(m => new MotoResponse
             {
-                Identificador = m.Identificador,
-                Ano = m.Ano,
-                Modelo = m.Modelo,
-                Placa = m.Placa
+                Identifier = m.Identifier,
+                Year = m.Year,
+                MotorcycleModel = m.MotorcycleModel,
+                LicensePlate = m.LicensePlate
             });
             return Ok(response);
         }
@@ -85,10 +85,10 @@ namespace RentalApi.Controllers
 
             var response = new MotoResponse
             {
-                Identificador = moto.Identificador,
-                Ano = moto.Ano,
-                Modelo = moto.Modelo,
-                Placa = moto.Placa
+                Identifier = moto.Identifier,
+                Year = moto.Year,
+                MotorcycleModel = moto.MotorcycleModel,
+                LicensePlate = moto.LicensePlate
             };
             return Ok(response);
         }
@@ -104,7 +104,7 @@ namespace RentalApi.Controllers
         {
             try
             {
-                var success = await _motoService.ChangeMotoLicenseAsync(id, request.Placa);
+                var success = await _motoService.ChangeMotoLicenseAsync(id, request.LicensePlate);
                 if (success)
                 {
                     return Ok(new { message = "Placa modificada com sucesso" });
