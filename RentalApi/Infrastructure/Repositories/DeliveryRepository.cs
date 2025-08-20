@@ -14,7 +14,8 @@ namespace RentalApi.Infrastructure.Repositories
         }
         public async Task<DeliveryPerson?> FindDeliveryPersonByIdentifierAsync(string id)
         {
-            return await _context.DeliveryPersons.FindAsync(id);
+            return await _context.DeliveryPersons
+                .FirstOrDefaultAsync(d => d.Identifier == id);
         }
         public async Task<DeliveryPerson?> FindDeliveryPersonByCnpjAsync(string cnpj)
         {
@@ -72,12 +73,12 @@ namespace RentalApi.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return deliveryPerson;
         }
-        public async Task<bool> AddCnhImageAsync(string deliveryPersonId, string base64Image)
+        public async Task<bool> AddCnhImageAsync(string deliveryPersonIdentifier, string base64Image)
         {
             if (string.IsNullOrWhiteSpace(base64Image))
                 throw new ArgumentException("Base64 image cannot be null or empty", nameof(base64Image));
-
-            var deliveryPerson = await FindDeliveryPersonByIdentifierAsync(deliveryPersonId);
+            var deliveryPerson = await _context.DeliveryPersons
+                .FirstOrDefaultAsync(d => d.Identifier == deliveryPersonIdentifier);
             if (deliveryPerson == null)
                 return false;
 

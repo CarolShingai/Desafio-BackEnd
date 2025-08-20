@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RentalApi.Application.Services;
 using RentalApi.Application.DTOs;
+using RentalApi.Domain.Interfaces;
 
 namespace RentalApi.Controllers
 {
@@ -9,9 +10,9 @@ namespace RentalApi.Controllers
     [Tags("locação")]
     public class RentMotoControllers : ControllerBase
     {
-        private readonly RentMotoService _rentMotoService;
+        private readonly IRentMotoService _rentMotoService;
 
-        public RentMotoControllers(RentMotoService rentMotoService)
+        public RentMotoControllers(IRentMotoService rentMotoService)
         {
             _rentMotoService = rentMotoService;
         }

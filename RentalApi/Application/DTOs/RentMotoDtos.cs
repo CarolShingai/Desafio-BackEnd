@@ -31,7 +31,7 @@ namespace RentalApi.Application.DTOs
         [JsonPropertyName("data_prevista_devolucao")]
         public DateTime ExpectedReturnDate { get; set; }
 
-        [JsonPropertyName("dias_plano")]
+        [JsonPropertyName("plano")]
         public int PlanDays { get; set; }
 
         [JsonPropertyName("valor_diaria")]

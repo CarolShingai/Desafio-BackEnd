@@ -8,7 +8,7 @@ namespace RentalApi.Domain.Entities
         public string Identifier { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Cnpj { get; set; } = string.Empty;
-        public string BirthDate { get; set; } = string.Empty;
+        public DateTime BirthDate { get; set; } = DateTime.MinValue;
         public string Cnh { get; set; } = string.Empty;
         public string CnhType { get; set; } = string.Empty;
         public string CnhImage { get; set; } = string.Empty;

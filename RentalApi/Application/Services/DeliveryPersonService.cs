@@ -18,13 +18,13 @@ namespace RentalApi.Application.Services
             var deliveryPerson = new DeliveryPerson
             {
                 Id = Guid.NewGuid(),
-                Identifier = dto.Identificador,
-                Name = dto.Nome,
+                Identifier = dto.Identifier,
+                Name = dto.Name,
                 Cnpj = dto.Cnpj,
-                BirthDate = dto.data_nascimento,
-                Cnh = dto.numero_cnh,
-                CnhType = dto.tipo_cnh,
-                CnhImage = dto.imagem_cnh
+                BirthDate = dto.BirthDate,
+                Cnh = dto.CnhNumber,
+                CnhType = dto.CnhType,
+                CnhImage = dto.CnhImage
             };
             return await _deliveryPersonRepository.AddDeliveryPersonAsync(deliveryPerson);
         }

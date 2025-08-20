@@ -6,12 +6,18 @@ using RentalApi.Infrastructure.Repositories;
 using RentalApi.Infrastructure.Data;
 using RentalApi.Infrastructure.Messaging;
 using RentalApi.Infrastructure.Background;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Swagger Services
-builder.Services.AddEndpointsApiExplorer(); // entrada
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.ExampleFilters();
+});
+builder.Services
+    .AddSwaggerExamplesFromAssemblyOf<RentalApi.Application.DTOs.CreateRentalRequestExample>();
 
 // PostgreSQL
 builder.Services.AddDbContext<RentalDbContext>(options =>
@@ -27,6 +33,10 @@ builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 builder.Services.AddScoped<IDeliveryPersonRepository, DeliveryRepository>();
 builder.Services.AddScoped<IDeliveryPersonService, DeliveryPersonService>();
 
+// RentMoto Dependencies
+builder.Services.AddScoped<IRentMotoRepository, RentMotoRepository>();
+builder.Services.AddScoped<IRentMotoService, RentMotoService>();
+
 // Background Services
 builder.Services.AddHostedService<RabbitMqBackgroundService>();
 
@@ -35,7 +45,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Aplicar migrações automaticamente na inicialização
+// Migrations
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<RentalDbContext>();
@@ -48,7 +58,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.MapControllers();
 app.Run();
