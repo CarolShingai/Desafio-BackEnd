@@ -16,28 +16,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Rental API - Sistema de Locação de Motos",
+        Title = "Sistema de Manutenção de Motos",
         Version = "v1",
-        Description = @"API para gerenciamento de locação de motos.
-
-**Funcionalidades:**
-- 🏍️ Cadastro e gerenciamento de motos
-- 👨‍💼 Gestão de entregadores
-- 📅 Sistema de locação com planos flexíveis
-- 💰 Cálculo automático de valores e multas
-- 📊 Simulação de custos de devolução
-
-**Tecnologias:**
-- .NET 9
-- Entity Framework Core
-- PostgreSQL
-- RabbitMQ
-- Docker",
-        Contact = new OpenApiContact
-        {
-            Name = "Sistema de Locação",
-            Email = "contato@locacao.com"
-        }
+        Description = @"API para gerenciamento de manutenção de motos."
     });
     
     c.ExampleFilters();

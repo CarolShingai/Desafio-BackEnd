@@ -6,7 +6,7 @@ using RentalApi.Domain.Entities;
 namespace RentalApi.Controllers
 {
     /// <summary>
-    /// Controller responsável pelo gerenciamento de motos.
+    /// Controller responsible for managing motorcycles.
     /// </summary>
     [ApiController]
     [Route("moto")]
@@ -15,36 +15,32 @@ namespace RentalApi.Controllers
     {
         private readonly MotoService _motoService;
 
-        /// <summary>
-        /// Construtor do controller de motos.
-        /// </summary>
-        /// <param name="motoService">Serviço de motos injetado.</param>
+    /// <summary>
+    /// Constructor for the motorcycle controller.
+    /// </summary>
+    /// <param name="motoService">Injected motorcycle service.</param>
         public MotoControllers(MotoService motoService)
         {
             _motoService = motoService;
         }
 
-        /// <summary>
-        /// Cria uma nova moto no sistema.
-        /// </summary>
-        /// <param name="request">Dados da moto a ser criada.</param>
-        /// <returns>Dados da moto criada com sucesso.</returns>
-        /// <response code="201">Moto criada com sucesso</response>
-        /// <response code="400">Dados inválidos fornecidos</response>
-        /// <response code="409">Moto com a mesma placa já existe</response>
-        /// <example>
-        /// POST /moto
-        /// {
-        ///   "identifier": "MOTO001",
-        ///   "year": 2024,
-        ///   "motorcycleModel": "Honda CG 160",
-        ///   "licensePlate": "ABC-1234"
-        /// }
-        /// </example>
+    /// <summary>
+    /// Creates a new motorcycle in the system.
+    /// </summary>
+    /// <param name="request">Motorcycle data to be created.</param>
+    /// <returns>Data of the created motorcycle.</returns>
+    /// <response code="400">Invalid input data</response>
+    /// <example>
+    /// POST /moto
+    /// {
+    ///   "identifier": "MOTO001",
+    ///   "year": 2024,
+    ///   "motorcycleModel": "Honda CG 160",
+    ///   "licensePlate": "ABC-1234"
+    /// }
+    /// </example>
         [HttpPost]
-        [ProducesResponseType(typeof(MotoResponse), 201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(409)]
         public async Task<IActionResult> CreateMoto([FromBody] CreateMotoRequest request)
         {
             var moto = new Moto
@@ -65,15 +61,13 @@ namespace RentalApi.Controllers
             return CreatedAtAction(nameof(GetMotoById), new { id = response.Identifier }, response);
         }
 
-        /// <summary>
-        /// Retorna todas as motos cadastradas no sistema.
-        /// </summary>
-        /// <returns>Lista completa de motos cadastradas.</returns>
-        /// <response code="200">Lista de motos retornada com sucesso</response>
-        /// <response code="500">Erro interno do servidor</response>
+    /// <summary>
+    /// Returns all motorcycles registered in the system.
+    /// </summary>
+    /// <returns>Complete list of registered motorcycles.</returns>
+    /// <response code="400">Invalid input data</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<MotoResponse>), 200)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> GetAllMotos()
         {
             var motos = await _motoService.GetAllMoto();
@@ -87,11 +81,11 @@ namespace RentalApi.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Busca uma moto pelo identificador.
-        /// </summary>
-        /// <param name="id">Identificador da moto.</param>
-        /// <returns>Dados da moto encontrada ou erro.</returns>
+    /// <summary>
+    /// Retrieves a motorcycle by its identifier.
+    /// </summary>
+    /// <param name="id">Motorcycle identifier.</param>
+    /// <returns>Motorcycle data or error.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMotoById(string id)
         {
@@ -112,12 +106,12 @@ namespace RentalApi.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Atualiza a placa de uma moto.
-        /// </summary>
-        /// <param name="id">Identificador da moto.</param>
-        /// <param name="request">Nova placa.</param>
-        /// <returns>Status da operação.</returns>
+    /// <summary>
+    /// Updates the license plate of a motorcycle.
+    /// </summary>
+    /// <param name="id">Motorcycle identifier.</param>
+    /// <param name="request">New license plate.</param>
+    /// <returns>Operation status.</returns>
         [HttpPut("{id}/placa")]
         public async Task<IActionResult> UpdateMotoPlaca(string id, [FromBody] UpdateMotoPlacaRequest request)
         {
@@ -136,11 +130,11 @@ namespace RentalApi.Controllers
             }
         }
 
-        /// <summary>
-        /// Remove uma moto pelo identificador.
-        /// </summary>
-        /// <param name="id">Identificador da moto.</param>
-        /// <returns>Status da operação.</returns>
+    /// <summary>
+    /// Removes a motorcycle by its identifier.
+    /// </summary>
+    /// <param name="id">Motorcycle identifier.</param>
+    /// <returns>Operation status.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMoto(string id)
         {
